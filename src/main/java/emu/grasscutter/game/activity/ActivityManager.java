@@ -9,6 +9,7 @@ import emu.grasscutter.game.player.BasePlayerManager;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.ActivityType;
 import emu.grasscutter.game.props.WatcherTriggerType;
+import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.server.packet.send.PacketActivityScheduleInfoNotify;
 import lombok.Getter;
 import lombok.val;
@@ -211,6 +212,14 @@ public class ActivityManager extends BasePlayerManager {
             .filter(x -> isActivityActive(x.getActivityId()))
             .map(ActivityConfigItem::getActivityId)
             .toList();
+    }
+
+    public void triggerSceneLoadForActiveActivity(Scene scene){
+        getActiveActivityIds().forEach(activityId -> {
+            val activityConfig = activityConfigItemMap.get(activityId);
+            val activityHandler = activityConfig.getActivityHandler();
+            activityHandler.onLoadScene(scene, player, activityConfig);
+        });
     }
 
 }

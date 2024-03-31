@@ -1,9 +1,12 @@
 package emu.grasscutter.game.activity.musicgame;
 
+import emu.grasscutter.game.activity.ActivityConfigItem;
 import emu.grasscutter.game.activity.ActivityHandler;
 import emu.grasscutter.game.activity.GameActivity;
 import emu.grasscutter.game.activity.PlayerActivityData;
 import emu.grasscutter.game.props.ActivityType;
+import emu.grasscutter.game.player.Player;
+import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.utils.JsonUtils;
 import lombok.val;
 import messages.activity.ActivityInfo;
@@ -90,5 +93,10 @@ public class MusicGameActivityHandler extends ActivityHandler {
 
         playerActivityData.setDetail(musicGamePlayerData);
         playerActivityData.save();
+    }
+
+    @Override
+    public void onLoadScene(Scene scene, Player player, ActivityConfigItem activityInfo) {
+
     }
 }
