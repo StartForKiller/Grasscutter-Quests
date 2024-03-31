@@ -8,6 +8,7 @@ import emu.grasscutter.game.activity.condition.ActivityConditionExecutor;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.WatcherTriggerType;
 import emu.grasscutter.game.quest.enums.QuestCond;
+import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.utils.DateHelper;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -30,8 +31,9 @@ public abstract class ActivityHandler {
     @Getter ActivityData activityData;
     Map<WatcherTriggerType, List<ActivityWatcher>> watchersMap = new HashMap<>();
 
-    abstract public void onProtoBuild(PlayerActivityData playerActivityData, ActivityInfo activityInfo);
-    abstract public void onInitPlayerActivityData(PlayerActivityData playerActivityData);
+    public abstract void onProtoBuild(PlayerActivityData playerActivityData, ActivityInfo activityInfo);
+    public abstract void onInitPlayerActivityData(PlayerActivityData playerActivityData);
+    public abstract void onLoadScene(Scene scene, Player player, ActivityConfigItem activityInfo);
 
     public void initWatchers(Map<WatcherTriggerType, ConstructorAccess<?>> activityWatcherTypeMap){
         activityData = GameData.getActivityDataMap().get(activityConfigItem.getActivityId());

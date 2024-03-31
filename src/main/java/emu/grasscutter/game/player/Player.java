@@ -1341,6 +1341,8 @@ public class Player {
         }
         */
 
+        // Activity needed for some quests
+        activityManager = new ActivityManager(this);
         // Create world
         World world = new World(this);
         world.addPlayer(this);
@@ -1352,8 +1354,6 @@ public class Player {
         // Execute daily reset logic if this is a new day.
         this.doDailyReset();
 
-        // Activity needed for some quests
-        activityManager = new ActivityManager(this);
 
         // Rewind active quests, and put the player to a rewind position it finds (if any) of an active quest
         getQuestManager().onLogin();

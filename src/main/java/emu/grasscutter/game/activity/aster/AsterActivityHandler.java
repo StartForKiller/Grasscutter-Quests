@@ -1,15 +1,20 @@
 package emu.grasscutter.game.activity.aster;
 
+import emu.grasscutter.data.GameData;
+import emu.grasscutter.game.activity.ActivityConfigItem;
 import emu.grasscutter.game.activity.ActivityHandler;
 import emu.grasscutter.game.activity.GameActivity;
 import emu.grasscutter.game.activity.PlayerActivityData;
 import emu.grasscutter.game.props.ActivityType;
+import emu.grasscutter.game.player.Player;
+import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.server.packet.send.*;
 import lombok.val;
 import messages.activity.ActivityInfo;
 import messages.activity.aster.*;
 import messages.general.Vector;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -68,4 +73,38 @@ public class AsterActivityHandler extends ActivityHandler {
     }
 
 
+    @Override
+    public void onLoadScene(Scene scene, Player player, ActivityConfigItem activityInfo) {
+        if(scene.getId() != 3){
+            return;
+        }
+        val groups = List.of(302001001,
+            302001002,
+            302001003,
+            302001004,
+            302001005,
+            302001006,
+            302001007,
+            302001008,
+            302001009,
+            302001010,
+            302001011,
+            302001012,
+            302001013,
+            302001014,
+            302001015,
+            302001016,
+            302001017,
+            302001018,
+            302001019,
+            302001041,
+            302001042,
+            302001043,
+            302001144,
+            302001901,
+            302001902,
+            302001903,
+            302001904);
+        groups.forEach(scene::loadDynamicGroup);
+    }
 }
