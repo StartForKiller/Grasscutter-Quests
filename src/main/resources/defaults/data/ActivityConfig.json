@@ -17,5 +17,15 @@
         ],
         "beginTime" : "2022-05-01T00:00:00+08:00",
         "endTime" : "2023-05-01T00:00:00+08:00"
+    },
+    {
+        "activityId": 2003,
+        "activityType": 1400,
+        "scheduleId": 2003001,
+        "meetCondList": [
+
+        ],
+        "beginTime": "2024-03-28T00:00:00+08:00",
+        "endTime": "2025-03-28T00:00:00+08:00"
     }
 ]

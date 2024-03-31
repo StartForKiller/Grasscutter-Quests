@@ -35,7 +35,7 @@ public enum QuestExec implements QuestTrigger {
     QUEST_EXEC_NOTIFY_DAILY_TASK (24), // missing
     QUEST_EXEC_CREATE_PATTERN_GROUP (25), // missing, used for random quests
     QUEST_EXEC_REMOVE_PATTERN_GROUP (26), // missing, used for random quests
-    QUEST_EXEC_REFRESH_GROUP_SUITE_RANDOM (27), // missing
+    QUEST_EXEC_REFRESH_GROUP_SUITE_RANDOM (27), // missing, seems that it refreshes a group but it picks a random suite from the list on the param
     QUEST_EXEC_ACTIVE_ITEM_GIVING (28), // missing
     QUEST_EXEC_DEL_ALL_SPECIFIC_PACK_ITEM (29), // missing
     QUEST_EXEC_ROLLBACK_PARENT_QUEST (30),
@@ -61,7 +61,7 @@ public enum QuestExec implements QuestTrigger {
     QUEST_EXEC_RANDOM_QUEST_VAR (51), // missing
     QUEST_EXEC_ACTIVATE_SCANNING_PIC (52), // missing, currently unused
     QUEST_EXEC_RELOAD_SCENE_TAG (53), // missing
-    QUEST_EXEC_REGISTER_DYNAMIC_GROUP_ONLY (54), // missing
+    QUEST_EXEC_REGISTER_DYNAMIC_GROUP_ONLY (54), // missing, seems that this loads a group that don't replace any other group, so for us is the same as QUEST_EXEC_REGISTER_DYNAMIC_GROUP
     QUEST_EXEC_CHANGE_SKILL_DEPOT (55), // missing
     QUEST_EXEC_ADD_SCENE_TAG (56), // missing
     QUEST_EXEC_DEL_SCENE_TAG (57), // missing

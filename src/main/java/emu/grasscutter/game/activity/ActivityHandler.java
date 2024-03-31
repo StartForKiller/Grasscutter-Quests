@@ -1,6 +1,8 @@
 package emu.grasscutter.game.activity;
 
 import com.esotericsoftware.reflectasm.ConstructorAccess;
+
+import emu.grasscutter.Grasscutter;
 import emu.grasscutter.data.GameData;
 import emu.grasscutter.data.excels.ActivityData;
 import emu.grasscutter.data.server.ActivityCondGroup;
@@ -104,6 +106,7 @@ public abstract class ActivityHandler {
 
     public ActivityInfo toProto(PlayerActivityData playerActivityData, ActivityConditionExecutor conditionExecutor){
         val proto = new ActivityInfo();
+        Grasscutter.getLogger().error("Activity: Id(" + activityConfigItem.getActivityId() + ")");
         proto.setActivityId(activityConfigItem.getActivityId());
         proto.setActivityType(activityConfigItem.getActivityType());
         proto.setScheduleId(activityConfigItem.getScheduleId());
