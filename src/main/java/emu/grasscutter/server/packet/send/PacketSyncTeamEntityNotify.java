@@ -1,53 +1,21 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.game.player.Player;
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.AbilitySyncStateInfoOuterClass.AbilitySyncStateInfo;
-import emu.grasscutter.net.proto.SyncTeamEntityNotifyOuterClass.SyncTeamEntityNotify;
-import emu.grasscutter.net.proto.TeamEntityInfoOuterClass.TeamEntityInfo;
+import emu.grasscutter.net.packet.BaseTypedPacket;
 import lombok.val;
-import emu.grasscutter.net.proto.AbilityAppliedAbilityOuterClass.AbilityAppliedAbility;
-import emu.grasscutter.net.proto.AbilityStringOuterClass.AbilityString;
+import messages.general.ability.AbilitySyncStateInfo;
+import messages.team.SyncTeamEntityNotify;
+import messages.team.TeamEntityInfo;
 
-import java.util.*;
+import java.util.ArrayList;
 
-public class PacketSyncTeamEntityNotify extends BasePacket {
+public class PacketSyncTeamEntityNotify extends BaseTypedPacket<SyncTeamEntityNotify> {
 
 	public PacketSyncTeamEntityNotify(Player player) {
-		super(PacketOpcodes.SyncTeamEntityNotify);
-
-		SyncTeamEntityNotify.Builder proto = SyncTeamEntityNotify.newBuilder()
-				.setSceneId(player.getSceneId());
+		super(new SyncTeamEntityNotify(player.getSceneId()));
 
 		if (player.getWorld().isMultiplayer()) {
-			for (Player p : player.getWorld().getPlayers()) {
-				// Skip if same player
-				if (player == p) {
-					continue;
-				}
-
-				// Set info
-				TeamEntityInfo info = TeamEntityInfo.newBuilder()
-						.setTeamEntityId(p.getTeamManager().getEntity().getId())
-						.setAuthorityPeerId(p.getPeerId())
-						.setTeamAbilityInfo(AbilitySyncStateInfo.newBuilder())
-						.build();
-
-				proto.addTeamEntityInfoList(info);
-			}
-		}
-
-		this.setData(proto);
-	}
-
-	public PacketSyncTeamEntityNotify(Player player, boolean ability) {
-		super(PacketOpcodes.SyncTeamEntityNotify);
-
-		SyncTeamEntityNotify.Builder proto = SyncTeamEntityNotify.newBuilder()
-				.setSceneId(player.getSceneId());
-
-		if (player.getWorld().isMultiplayer() || ability) {
+            val infoList = new ArrayList<TeamEntityInfo>();
 			for (Player p : player.getWorld().getPlayers()) {
 				// Skip if same player
 				if (player == p) {
@@ -68,18 +36,14 @@ public class PacketSyncTeamEntityNotify extends BasePacket {
 				}
 
 				// Set info
-				TeamEntityInfo info = TeamEntityInfo.newBuilder()
-						.setTeamEntityId(entity.getId())
-						.setAuthorityPeerId(p.getPeerId())
-						.setTeamAbilityInfo(AbilitySyncStateInfo.newBuilder()
-							.setIsInited(true)
-							.addAllAppliedAbilities(abilities))
-						.build();
+				val info = new TeamEntityInfo();
+                info.setTeamEntityId(p.getTeamManager().getEntity().getId());
+                info.setAuthorityPeerId(p.getPeerId());
+                info.setTeamAbilityInfo(new AbilitySyncStateInfo());
 
-				proto.addTeamEntityInfoList(info);
+                infoList.add(info);
 			}
+            proto.setTeamEntityInfoList(infoList);
 		}
-
-		this.setData(proto);
 	}
 }

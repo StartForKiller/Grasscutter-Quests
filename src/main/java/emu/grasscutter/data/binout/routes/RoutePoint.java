@@ -1,12 +1,12 @@
 package emu.grasscutter.data.binout.routes;
 
-import emu.grasscutter.net.proto.RoutePointOuterClass;
 import emu.grasscutter.utils.Position;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+
+import messages.general.RoutePoint.MoveParams;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -16,19 +16,18 @@ public class RoutePoint {
     private float waitTime; //optional
     private float targetVelocity; //optional
     private boolean hasReachEvent; //optional
+    private boolean reachStop; //optional
     // rotRoundReachDir //optional Pos with optional values
     // rotRoundLeaveDir //optional Pos with optional values
 
-    public RoutePointOuterClass.RoutePoint.Builder toProto(){
-        val builder = RoutePointOuterClass.RoutePoint.newBuilder()
-            .setPosition(pos.toProtoOld());
+    public messages.general.RoutePoint toProto(){
+        val proto = new messages.general.RoutePoint(pos.toProto());
         if(waitTime!=0){
-            builder.setTime(waitTime);
+            proto.setMoveParams(new MoveParams.Time(waitTime));
         } else if(targetVelocity!=0){
-            builder.setVelocity(targetVelocity);
+            proto.setMoveParams(new MoveParams.Velocity(targetVelocity));
         }
 
-
-        return builder;
+        return proto;
     }
 }

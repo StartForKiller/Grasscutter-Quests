@@ -10,6 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.val;
+import messages.battle_pass.BattlePassCycle;
+import messages.battle_pass.BattlePassRewardTakeOption;
+import messages.battle_pass.BattlePassSchedule;
+import messages.battle_pass.BattlePassUnlockStatus;
 import org.bson.types.ObjectId;
 
 import dev.morphia.annotations.Entity;
@@ -31,10 +36,6 @@ import emu.grasscutter.game.props.BattlePassMissionRefreshType;
 import emu.grasscutter.game.props.BattlePassMissionStatus;
 import emu.grasscutter.game.props.ItemUseOp;
 import emu.grasscutter.game.props.WatcherTriggerType;
-import emu.grasscutter.net.proto.BattlePassCycleOuterClass.BattlePassCycle;
-import emu.grasscutter.net.proto.BattlePassUnlockStatusOuterClass.BattlePassUnlockStatus;
-import emu.grasscutter.net.proto.BattlePassRewardTakeOptionOuterClass.BattlePassRewardTakeOption;
-import emu.grasscutter.net.proto.BattlePassScheduleOuterClass.BattlePassSchedule;
 import emu.grasscutter.server.packet.send.PacketBattlePassCurScheduleUpdateNotify;
 import emu.grasscutter.server.packet.send.PacketBattlePassMissionUpdateNotify;
 import emu.grasscutter.server.packet.send.PacketTakeBattlePassRewardRsp;
@@ -285,7 +286,7 @@ public class BattlePassManager extends BasePlayerDataManager {
                 }
 
                 // Construct the reward and set as taken.
-                BattlePassReward bpReward = new BattlePassReward(tag.getLevel(), tag.getRewardId(), tag.getUnlockStatus() == BattlePassUnlockStatus.BATTLE_PASS_UNLOCK_STATUS_PAID);
+                BattlePassReward bpReward = new BattlePassReward(tag.getLevel(), tag.getRewardId(), tag.getUnlockStatus() == BattlePassUnlockStatus.BATTLE_PASS_UNLOCK_PAID);
                 this.getTakenRewards().put(bpReward.getRewardId(), bpReward);
             }
 
@@ -353,33 +354,26 @@ public class BattlePassManager extends BasePlayerDataManager {
 
     //
     public BattlePassSchedule getScheduleProto() {
-        var currentDate = LocalDate.now();
-        var nextSundayDate = (currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
+        val currentDate = LocalDate.now();
+        val nextSundayDate = (currentDate.getDayOfWeek() == DayOfWeek.SUNDAY)
             ? currentDate
             : LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.SUNDAY));
-        var nextSundayTime = LocalDateTime.of(nextSundayDate.getYear(), nextSundayDate.getMonthValue(), nextSundayDate.getDayOfMonth(), 23, 59, 59);
+        val nextSundayTime = LocalDateTime.of(nextSundayDate.getYear(), nextSundayDate.getMonthValue(), nextSundayDate.getDayOfMonth(), 23, 59, 59);
+        val cycle = new BattlePassCycle(0, 3 ,
+            (int)nextSundayTime.atZone(ZoneId.systemDefault()).toEpochSecond());
 
-        BattlePassSchedule.Builder schedule = BattlePassSchedule.newBuilder()
-                .setScheduleId(2700)
-                .setLevel(this.getLevel())
-                .setPoint(this.getPoint())
-                .setBeginTime(0)
-                .setEndTime(2059483200)
-                .setIsViewed(this.isViewed())
-                .setUnlockStatus(this.isPaid() ? BattlePassUnlockStatus.BATTLE_PASS_UNLOCK_STATUS_PAID : BattlePassUnlockStatus.BATTLE_PASS_UNLOCK_STATUS_FREE)
-                .setUnk2700ODHAAHEPFAG(2) // Not bought on Playstation.
-                .setCurCyclePoints(this.getCyclePoints())
-                .setCurCycle(BattlePassCycle.newBuilder()
-                    .setBeginTime(0)
-                    .setEndTime((int)nextSundayTime.atZone(ZoneId.systemDefault()).toEpochSecond())
-                    .setCycleIdx(3)
-                );
+        val schedule = new BattlePassSchedule(0,cycle,2059483200);
+        schedule.setScheduleId(2700);
+        schedule.setLevel(this.getLevel());
+        schedule.setPoint(this.getPoint());
+        schedule.setViewed(this.isViewed());
+        schedule.setUnlockStatus(this.isPaid() ? BattlePassUnlockStatus.BATTLE_PASS_UNLOCK_PAID : BattlePassUnlockStatus.BATTLE_PASS_UNLOCK_FREE);
+        schedule.setPaidPlatformFlags(2); // Not bought on Playstation.
+        schedule.setCurCyclePoints(this.getCyclePoints());
 
-        for (BattlePassReward reward : getTakenRewards().values()) {
-            schedule.addRewardTakenList(reward.toProto());
-        }
+        schedule.setRewardTakenList(getTakenRewards().values().stream().map(BattlePassReward::toProto).toList());
 
-        return schedule.build();
+        return schedule;
     }
 
     public void save() {

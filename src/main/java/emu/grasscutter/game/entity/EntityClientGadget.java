@@ -9,12 +9,12 @@ import emu.grasscutter.game.entity.interfaces.ConfigAbilityDataAbilityEntity;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.PlayerProperty;
 import emu.grasscutter.game.world.Scene;
-import emu.grasscutter.net.proto.EvtCreateGadgetNotifyOuterClass.EvtCreateGadgetNotify;
 import emu.grasscutter.utils.Position;
 import emu.grasscutter.utils.ProtoHelper;
 import it.unimi.dsi.fastutil.ints.Int2FloatMap;
 import lombok.Getter;
 import lombok.val;
+import messages.battle.EvtCreateGadgetNotify;
 import messages.general.Vector;
 import messages.general.ability.AbilitySyncStateInfo;
 import messages.scene.entity.*;
@@ -44,7 +44,7 @@ public class EntityClientGadget extends EntityBaseGadget implements ConfigAbilit
         this.gadgetId = notify.getConfigId();
         this.ownerEntityId = notify.getPropOwnerEntityId();
         this.targetEntityId = notify.getTargetEntityId();
-        this.asyncLoad = notify.getIsAsyncLoad();
+        this.asyncLoad = notify.isAsyncLoad();
 
         this.gadgetData = GameData.getGadgetDataMap().get(gadgetId);
         if (gadgetData!=null && gadgetData.getJsonName()!=null) {

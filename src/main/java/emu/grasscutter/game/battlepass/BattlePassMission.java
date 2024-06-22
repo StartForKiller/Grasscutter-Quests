@@ -11,13 +11,13 @@ public class BattlePassMission {
 	private int id;
 	private int progress;
 	private BattlePassMissionStatus status;
-	
+
 	@Transient
 	private BattlePassMissionData data;
-	
+
 	@Deprecated // Morphia only
 	public BattlePassMission() {}
-	
+
 	public BattlePassMission(int id) {
 		this.id = id;
 	}
@@ -58,17 +58,14 @@ public class BattlePassMission {
 		return getStatus().getValue() >= 2;
 	}
 
-	public emu.grasscutter.net.proto.BattlePassMissionOuterClass.BattlePassMission toProto() {
-		var protoBuilder = emu.grasscutter.net.proto.BattlePassMissionOuterClass.BattlePassMission.newBuilder();
-		
-		protoBuilder
-			.setMissionId(getId())
-			.setCurProgress(getProgress())
-			.setTotalProgress(getData().getProgress())
-			.setRewardBattlePassPoint(getData().getAddPoint())
-			.setMissionStatus(getStatus().getMissionStatus())
-			.setMissionType(getData().getRefreshType() == null ? 0 : getData().getRefreshType().getValue());
-		
-		return protoBuilder.build();
+	public messages.battle_pass.BattlePassMission toProto() {
+		var proto = new messages.battle_pass.BattlePassMission(getProgress(), getId(),
+            getStatus().getMissionStatus());
+
+        proto.setTotalProgress(getData().getRefreshType() == null ? 0 : getData().getRefreshType().getValue());
+        proto.setRewardBattlePassPoint(getData().getAddPoint());
+        proto.setTotalProgress(getData().getProgress());
+
+        return proto;
 	}
 }

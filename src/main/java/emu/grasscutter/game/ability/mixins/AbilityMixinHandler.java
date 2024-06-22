@@ -7,6 +7,6 @@ import emu.grasscutter.game.ability.Ability;
 
 public abstract class AbilityMixinHandler {
 
-    public abstract boolean execute(Ability ability, AbilityMixinData mixinData, ByteString abilityData);
+    public abstract boolean execute(Ability ability, AbilityMixinData mixinData, byte[] abilityData);
 
 }

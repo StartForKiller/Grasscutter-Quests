@@ -245,11 +245,15 @@ public class GameQuest {
 
     // Return true if it did the rewind
     public boolean rewind(boolean notifyDelete) {
+        //rewind everything after the rewind target
         getMainQuest().getChildQuests().values().stream().filter(p -> p.getQuestData().getOrder() > this.getQuestData().getOrder()).forEach(q -> {
             q.clearProgress(notifyDelete);
         });
+
+        //rewind and restart itself
         clearProgress(notifyDelete);
         this.start();
+
         return true;
     }
 

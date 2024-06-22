@@ -1,23 +1,18 @@
 package emu.grasscutter.game.ability.actions;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import emu.grasscutter.Grasscutter;
-import emu.grasscutter.Loggers;
 import emu.grasscutter.data.binout.AbilityModifier.AbilityModifierAction;
 import emu.grasscutter.game.ability.Ability;
 import emu.grasscutter.game.entity.EntityGadget;
 import emu.grasscutter.game.entity.GameEntity;
 import emu.grasscutter.game.props.CampTargetType;
-import emu.grasscutter.net.proto.AbilityActionCreateGadgetOuterClass.AbilityActionCreateGadget;
 import emu.grasscutter.utils.Position;
+import messages.ability.action.AbilityActionCreateGadget;
 
 @AbilityAction(AbilityModifierAction.Type.CreateGadget)
 public class ActionCreateGadget extends AbilityActionHandler {
 
     @Override
-    public boolean execute(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public boolean execute(Ability ability, AbilityModifierAction action,byte[] abilityData, GameEntity target) {
         if(!action.byServer) {
             logger.debug("Action not executed by server");
 
@@ -27,8 +22,8 @@ public class ActionCreateGadget extends AbilityActionHandler {
         var entity = ability.getOwner();
         AbilityActionCreateGadget createGadget;
         try {
-            createGadget = AbilityActionCreateGadget.parseFrom(abilityData);
-        } catch (InvalidProtocolBufferException e) {
+            createGadget = AbilityActionCreateGadget.parseBy(abilityData, ability.getPlayerOwner().getSession().getVersion());
+        } catch (Exception e) {
             return false;
         }
 

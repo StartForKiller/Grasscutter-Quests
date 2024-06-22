@@ -236,6 +236,13 @@ public abstract class GameEntity {
 
     }
 
+    /**
+     * Called right after this entity is added to the world
+     */
+    public void afterCreate(List<Player> players) {
+
+    }
+
     public void onRemoved() {
 
     }

@@ -1,34 +1,24 @@
 package emu.grasscutter.server.packet.send;
 
 import java.util.Collection;
+import java.util.List;
 
 import emu.grasscutter.game.battlepass.BattlePassMission;
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.BattlePassMissionUpdateNotifyOuterClass.BattlePassMissionUpdateNotify;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.battle_pass.BattlePassMissionUpdateNotify;
 
-public class PacketBattlePassMissionUpdateNotify extends BasePacket {
+public class PacketBattlePassMissionUpdateNotify extends BaseTypedPacket<BattlePassMissionUpdateNotify> {
 
     public PacketBattlePassMissionUpdateNotify(BattlePassMission mission) {
-        super(PacketOpcodes.BattlePassMissionUpdateNotify);
-
-        var proto = BattlePassMissionUpdateNotify.newBuilder()
-        		.addMissionList(mission.toProto())
-        		.build();
-
-        this.setData(proto);
+        this(List.of(mission.toProto()));
     }
-    
+
     public PacketBattlePassMissionUpdateNotify(Collection<BattlePassMission> missions) {
-        super(PacketOpcodes.BattlePassMissionUpdateNotify);
+        this(missions.stream().map(BattlePassMission::toProto).toList());
+    }
 
-        var proto = BattlePassMissionUpdateNotify.newBuilder();
-
-        missions.forEach(mission -> {
-        	proto.addMissionList(mission.toProto());
-        });
-        
-        this.setData(proto.build());
+    protected PacketBattlePassMissionUpdateNotify(List<messages.battle_pass.BattlePassMission> protoMissions) {
+        super(new BattlePassMissionUpdateNotify(protoMissions));
     }
 
 }

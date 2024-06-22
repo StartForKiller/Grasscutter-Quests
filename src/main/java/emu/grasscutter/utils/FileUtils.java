@@ -160,7 +160,7 @@ public final class FileUtils {
         return SCRIPTS_PATH.resolve(path);
     }
     public static Path getScriptOverwritePath(String path) {
-        return SCRIPTS_PATH.resolve(path);
+        return SCRIPTS_OVERWRITES_PATH.resolve(path);
     }
 
     public static void write(String dest, byte[] bytes) {

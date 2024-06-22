@@ -1,8 +1,5 @@
 package emu.grasscutter.game.ability.actions;
 
-import com.google.protobuf.ByteString;
-
-import emu.grasscutter.Grasscutter;
 import emu.grasscutter.data.binout.AbilityModifier.AbilityModifierAction;
 import emu.grasscutter.game.ability.Ability;
 import emu.grasscutter.game.entity.EntityClientGadget;
@@ -12,7 +9,7 @@ import emu.grasscutter.game.props.FightProperty;
 @AbilityAction(AbilityModifierAction.Type.HealHP)
 public class ActionHealHP extends AbilityActionHandler {
     @Override
-    public boolean execute(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public boolean execute(Ability ability, AbilityModifierAction action, byte[] abilityData, GameEntity target) {
         logger.info("Heal ability action executing 1\n");
 
         GameEntity owner = ability.getOwner();

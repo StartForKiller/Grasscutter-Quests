@@ -1,32 +1,24 @@
 package emu.grasscutter.server.packet.send;
 
+import java.util.Collections;
 import java.util.List;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.AbilityInvocationsNotifyOuterClass.AbilityInvocationsNotify;
-import emu.grasscutter.net.proto.AbilityInvokeEntryOuterClass.AbilityInvokeEntry;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.ability.AbilityInvocationsNotify;
+import messages.ability.AbilityInvokeEntry;
 
-public class PacketAbilityInvocationsNotify extends BasePacket {
-	
+public class PacketAbilityInvocationsNotify extends BaseTypedPacket<AbilityInvocationsNotify> {
+
 	public PacketAbilityInvocationsNotify(AbilityInvokeEntry entry) {
-		super(PacketOpcodes.AbilityInvocationsNotify, true);
-		
-		AbilityInvocationsNotify proto = AbilityInvocationsNotify.newBuilder()
-				.addInvokes(entry)
-				.build();
+		super(new AbilityInvocationsNotify(), true);
 
-		this.setData(proto);
+        proto.setInvokes(Collections.singletonList(entry));
 	}
-	
+
 	public PacketAbilityInvocationsNotify(List<AbilityInvokeEntry> entries) {
-		super(PacketOpcodes.AbilityInvocationsNotify, true);
-		
-		AbilityInvocationsNotify proto = AbilityInvocationsNotify.newBuilder()
-				.addAllInvokes(entries)
-				.build();
-		
-		this.setData(proto);
+		super(new AbilityInvocationsNotify(), true);
+
+        proto.setInvokes(entries);
 	}
-	
+
 }

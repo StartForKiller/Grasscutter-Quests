@@ -109,6 +109,7 @@ public class GameData {
     @Getter private static final Int2ObjectMap<CodexQuestData> codexQuestDataIdMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<CodexReliquaryData> codexReliquaryDataIdMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<CodexWeaponData> codexWeaponDataIdMap = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<CodexViewpointData> codexViewpointDataIdMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<CombineData> combineDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<CookBonusData> cookBonusDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<CookRecipeData> cookRecipeDataMap = new Int2ObjectOpenHashMap<>();
@@ -126,6 +127,7 @@ public class GameData {
     @Getter private static final Int2ObjectMap<ForgeData> forgeDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<FurnitureMakeConfigData> furnitureMakeConfigDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<GadgetData> gadgetDataMap = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<GadgetInteractData> gadgetInteractDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<GatherData> gatherDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<GuideTriggerData> guideTriggerDataMap = new Int2ObjectOpenHashMap<>(); // Don't use, just to prevent resource loader from crashing
     @Getter private static final Int2ObjectMap<HomeWorldBgmData> homeWorldBgmDataMap = new Int2ObjectOpenHashMap<>();
@@ -149,6 +151,7 @@ public class GameData {
     @Getter private static final Int2ObjectMap<RewardData> rewardDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<RewardPreviewData> rewardPreviewDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<SceneData> sceneDataMap = new Int2ObjectLinkedOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<SceneTagData> sceneTagDataMap = new Int2ObjectLinkedOpenHashMap<>();
     @Getter private static final Int2ObjectMap<TowerBuffData> towerBuffDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<TowerFloorData> towerFloorDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<TowerLevelData> towerLevelDataMap = new Int2ObjectOpenHashMap<>();
@@ -186,6 +189,7 @@ public class GameData {
     private static final Int2ObjectMap<CodexQuestData> codexQuestDataMap = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectMap<CodexReliquaryData> codexReliquaryDataMap = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectMap<CodexWeaponData> codexWeaponDataMap = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<CodexViewpointData> codexViewpointDataMap = new Int2ObjectOpenHashMap<>();
 
     @Getter private static final Int2ObjectMap<List<DungeonDropEntry>> dungeonDropDataMap = new Int2ObjectOpenHashMap<>();
 
@@ -355,5 +359,9 @@ public class GameData {
 
     public static TriggerExcelConfigData getQuestTriggerDataByName(int groupId, String triggerName){
         return triggerDataByNameMap.get(groupId + triggerName);
+    }
+
+    public static CodexViewpointData getViewCodexByGroupdCfg(int groupId, int cfgId){
+        return codexViewpointDataIdMap.get(CodexViewpointData.getViewpointId(groupId, cfgId));
     }
 }

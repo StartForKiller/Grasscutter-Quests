@@ -2,7 +2,6 @@ package emu.grasscutter.game.gacha;
 
 import static emu.grasscutter.config.Configuration.*;
 
-import java.io.File;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -338,7 +337,7 @@ public class GachaSystem extends BaseGameSystem {
 
             // Create item
             GameItem item = new GameItem(itemData);
-            gachaItem.setGachaItem(item.toItemParam());
+            gachaItem.setGachaItem(item.toItemParamOld());
             inventory.addItem(item);
 
             stardust += addStardust;

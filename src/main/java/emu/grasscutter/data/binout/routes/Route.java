@@ -1,10 +1,12 @@
 package emu.grasscutter.data.binout.routes;
 
-import emu.grasscutter.net.proto.RouteOuterClass;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -17,15 +19,9 @@ public class Route {
     private RotType rotType; // optional
     private RotAngleType rotAngleType; // optional
 
-    public RouteOuterClass.Route toProto(){
-        val builder =  RouteOuterClass.Route.newBuilder()
-            .setRouteType(type.getValue());
-        if(points !=null){
-            for(var routePoint : points){
-                builder.addRoutePoints(routePoint.toProto()
-                    .setArriveRange(arriveRange));
-            }
-        }
-        return builder.build();
+    public messages.scene.entity.Route toProto(){
+        val protoPoints = points == null? new ArrayList<messages.general.RoutePoint>() :
+            Arrays.stream(points).map(RoutePoint::toProto).toList();
+        return new messages.scene.entity.Route(protoPoints, type.getValue());
     }
 }

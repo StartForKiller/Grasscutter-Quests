@@ -1,18 +1,13 @@
 package emu.grasscutter.server.packet.recv;
 
-import emu.grasscutter.net.packet.Opcodes;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.EvtDestroyGadgetNotifyOuterClass.EvtDestroyGadgetNotify;
-import emu.grasscutter.net.packet.PacketHandler;
+import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.server.game.GameSession;
+import messages.battle.EvtDestroyGadgetNotify;
 
-@Opcodes(PacketOpcodes.EvtDestroyGadgetNotify)
-public class HandlerEvtDestroyGadgetNotify extends PacketHandler {
-	
+public class HandlerEvtDestroyGadgetNotify extends TypedPacketHandler<EvtDestroyGadgetNotify> {
+
 	@Override
-	public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
-		EvtDestroyGadgetNotify notify = EvtDestroyGadgetNotify.parseFrom(payload);
-
+	public void handle(GameSession session, byte[] header, EvtDestroyGadgetNotify notify) throws Exception {
 		session.getPlayer().getScene().onPlayerDestroyGadget(notify.getEntityId());
 	}
 

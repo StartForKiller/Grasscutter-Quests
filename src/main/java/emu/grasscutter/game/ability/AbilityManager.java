@@ -10,9 +10,7 @@ import java.util.concurrent.TimeUnit;
 import emu.grasscutter.Grasscutter;
 import emu.grasscutter.Loggers;
 import emu.grasscutter.game.props.ElementReactionType;
-import emu.grasscutter.net.proto.AbilityMetaTriggerElementReactionOuterClass.AbilityMetaTriggerElementReaction;
 
-import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import emu.grasscutter.data.GameData;
@@ -27,16 +25,21 @@ import emu.grasscutter.game.ability.mixins.AbilityMixinHandler;
 import emu.grasscutter.game.entity.GameEntity;
 import emu.grasscutter.game.player.BasePlayerManager;
 import emu.grasscutter.game.player.Player;
-import emu.grasscutter.net.proto.AbilityInvokeEntryOuterClass.AbilityInvokeEntry;
-import emu.grasscutter.net.proto.AbilityMetaModifierChangeOuterClass.AbilityMetaModifierChange;
-import emu.grasscutter.net.proto.AbilityMetaReInitOverrideMapOuterClass.AbilityMetaReInitOverrideMap;
-import emu.grasscutter.net.proto.AbilityScalarTypeOuterClass.AbilityScalarType;
-import emu.grasscutter.net.proto.AbilityScalarValueEntryOuterClass.AbilityScalarValueEntry;
-import emu.grasscutter.net.proto.ModifierActionOuterClass.ModifierAction;
 import io.netty.util.concurrent.FastThreadLocalThread;
 import lombok.Getter;
-import emu.grasscutter.net.proto.AbilityMetaAddAbilityOuterClass.AbilityMetaAddAbility;
+import lombok.val;
+import messages.ability.AbilityInvokeEntry;
+import messages.ability.ModifierAction;
+import messages.ability.meta.AbilityMetaAddAbility;
+import messages.ability.meta.AbilityMetaModifierChange;
+import messages.ability.meta.AbilityMetaReInitOverrideMap;
+import messages.ability.meta.AbilityMetaTriggerElementReaction;
+import messages.general.ability.AbilityScalarType;
+import messages.general.ability.AbilityScalarValueEntry;
+import messages.general.ability.AbilityString;
 import org.slf4j.Logger;
+
+import javax.annotation.Nullable;
 
 public final class AbilityManager extends BasePlayerManager {
     @Getter
@@ -92,7 +95,7 @@ public final class AbilityManager extends BasePlayerManager {
         }
     }
 
-    public void executeAction(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public void executeAction(Ability ability, AbilityModifierAction action, byte[] abilityData, GameEntity target) {
         AbilityActionHandler handler = actionHandlers.get(action.type);
 
         if (handler == null || ability == null) {
@@ -107,7 +110,7 @@ public final class AbilityManager extends BasePlayerManager {
         });
     }
 
-    public void executeMixin(Ability ability, AbilityMixinData mixinData, ByteString abilityData) {
+    public void executeMixin(Ability ability, AbilityMixinData mixinData, byte[] abilityData) {
         AbilityMixinHandler handler = mixinHandlers.get(mixinData.type);
 
         if (handler == null || ability == null || mixinData == null) {
@@ -123,7 +126,7 @@ public final class AbilityManager extends BasePlayerManager {
     }
 
     public void onAbilityInvoke(AbilityInvokeEntry invoke) throws Exception {
-        logger.debug("Ability invoke: " + invoke + " " + invoke.getArgumentType() + " (" + invoke.getArgumentTypeValue() + "): " + this.player.getScene().getEntityById(invoke.getEntityId()));
+        logger.debug("Ability invoke: " + invoke + " " + invoke.getArgumentType() + " (" + invoke.getArgumentType() + "): " + this.player.getScene().getEntityById(invoke.getEntityId()));
         var entity = this.player.getScene().getEntityById(invoke.getEntityId());
         if(entity != null) {
             logger.debug("Entity group id {} config id {}", entity.getGroupId(), entity.getConfigId());
@@ -261,14 +264,22 @@ public final class AbilityManager extends BasePlayerManager {
             return;
         }
 
-        if(!valueChange.getKey().hasStr()) {
-            logger.info("TODO: Calculate all the ability value hashes");
-
+        if(valueChange.getKey() == null){
+            logger.warn("Key is null");
             return;
         }
 
-        ability.getAbilitySpecials().put(valueChange.getKey().getStr(), valueChange.getFloatValue());
-        logger.debug("Ability {} changed {} to {}", ability.getData().abilityName, valueChange.getKey().getStr(), valueChange.getFloatValue());
+        if(valueChange.getKey().getType() instanceof AbilityString.Type.Str str){
+            val key = str.getValue();
+            val value = ((AbilityScalarValueEntry.Value.FloatValue) valueChange.getValue()).getValue();
+
+            ability.getAbilitySpecials().put(key, value);
+            logger.debug("Ability {} changed {} to {}", ability.getData().abilityName, key, value);
+        } else {
+            // TODO
+            logger.info("TODO: Calculate all the ability value hashes");
+        }
+
     }
 
     private void handleOverrideParam(AbilityInvokeEntry invoke) throws Exception {
@@ -286,7 +297,7 @@ public final class AbilityManager extends BasePlayerManager {
             return;
         }
 
-        var valueChange = AbilityScalarValueEntry.parseFrom(invoke.getAbilityData());
+        var valueChange = AbilityScalarValueEntry.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
 
         var ability = entity.getInstancedAbilities().get(instancedAbilityIndex);
         setAbilityOverrideValue(ability, valueChange);
@@ -308,20 +319,20 @@ public final class AbilityManager extends BasePlayerManager {
         }
 
         var ability = entity.getInstancedAbilities().get(instancedAbilityIndex);
-        var valueChanges = AbilityMetaReInitOverrideMap.parseFrom(invoke.getAbilityData());
-        for (var variableChange : valueChanges.getOverrideMapList()) {
+        var valueChanges = AbilityMetaReInitOverrideMap.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
+        for (var variableChange : valueChanges.getOverrideMap()) {
             setAbilityOverrideValue(ability, variableChange);
         }
     }
 
     private void handleModifierChange(AbilityInvokeEntry invoke) throws Exception {
         //TODO:
-        var modChange = AbilityMetaModifierChange.parseFrom(invoke.getAbilityData());
+        var modChange = AbilityMetaModifierChange.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
         var head = invoke.getHead();
 
         if(head.getInstancedAbilityId() == 0 || head.getInstancedModifierId() > 2000) return; //Error: TODO: display error
 
-        if(head.getIsServerbuffModifier()) {
+        if(head.isServerbuffModifier()) {
             //TODO
             logger.info("TODO: Handle serverbuff modifier");
 
@@ -363,7 +374,7 @@ public final class AbilityManager extends BasePlayerManager {
                 //Search for the parent ability
 
                 //TODO: Research about hash
-                instancedAbilityData = GameData.getAbilityData(modChange.getParentAbilityName().getStr());
+                instancedAbilityData = GameData.getAbilityData(getAbilityName(modChange.getParentAbilityName()));
             }
 
             if(instancedAbilityData == null ||  instancedAbilityData.modifiers == null) {
@@ -409,29 +420,40 @@ public final class AbilityManager extends BasePlayerManager {
 
     }
 
+    @Nullable
+    private String getAbilityName(AbilityString protoString) {
+        if(protoString.getType() instanceof AbilityString.Type.Str str){
+            return str.getValue();
+        } else if (protoString.getType() instanceof AbilityString.Type.Hash hash){
+            return GameData.getAbilityHashes().get((int)hash.getValue());
+        }
+        return null;
+    }
+
     private void handleGlobalFloatValue(AbilityInvokeEntry invoke) throws InvalidProtocolBufferException {
         var entity = this.player.getScene().getEntityById(invoke.getEntityId());
         if(entity == null) return;
 
-        var entry = AbilityScalarValueEntry.parseFrom(invoke.getAbilityData());
-        if(entry == null || !entry.hasFloatValue()) return;
+        var entry = AbilityScalarValueEntry.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
+        if(entry == null || !(entry.getValue() instanceof AbilityScalarValueEntry.Value.FloatValue)) return;
 
-        String key = null;
-        if(entry.getKey().hasStr())
-            key = entry.getKey().getStr();
-        else if(entry.getKey().hasHash())
-            key = GameData.getAbilityHashes().get(entry.getKey().getHash());
+        String key = getAbilityName(entry.getKey());
 
         if(key == null) return;
 
         if(key.startsWith("SGV_")) return; //Server does not allow to change this variables I think
-        switch(entry.getValueType().getNumber()) {
-            case AbilityScalarType.ABILITY_SCALAR_TYPE_FLOAT_VALUE:
-                if(!Float.isNaN(entry.getFloatValue())) entity.getGlobalAbilityValues().put(key, entry.getFloatValue());
+        switch(entry.getValueType()) {
+            case ABILITY_SCALAR_TYPE_FLOAT: {
+                float value = ((AbilityScalarValueEntry.Value.FloatValue) entry.getValue()).getValue();
+                if (!Float.isNaN(value))
+                    entity.getGlobalAbilityValues().put(key, value);
                 break;
-            case AbilityScalarType.ABILITY_SCALAR_TYPE_UINT_VALUE:
-                entity.getGlobalAbilityValues().put(key, (float)entry.getUintValue());
+            }
+            case ABILITY_SCALAR_TYPE_UINT:
+                float uvalue = ((AbilityScalarValueEntry.Value.UintValue) entry.getValue()).getValue();
+                entity.getGlobalAbilityValues().put(key, uvalue);
                 break;
+
             default:
                 return;
         }
@@ -453,7 +475,7 @@ public final class AbilityManager extends BasePlayerManager {
             return;
         }
 
-        var addAbility = AbilityMetaAddAbility.parseFrom(invoke.getAbilityData());
+        var addAbility = AbilityMetaAddAbility.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
 
         var abilityName = Ability.getAbilityName(addAbility.getAbility().getAbilityName());
 
@@ -475,7 +497,7 @@ public final class AbilityManager extends BasePlayerManager {
     private void handleTriggerElementReaction(AbilityInvokeEntry invoke) throws InvalidProtocolBufferException {
         if (getPlayer().getScene() == null) return;
 
-        AbilityMetaTriggerElementReaction data = AbilityMetaTriggerElementReaction.parseFrom(invoke.getAbilityData());
+        AbilityMetaTriggerElementReaction data = AbilityMetaTriggerElementReaction.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
         GameEntity targetEntity = getPlayer().getScene().getEntityById(invoke.getEntityId());
         if (targetEntity == null) return;
 

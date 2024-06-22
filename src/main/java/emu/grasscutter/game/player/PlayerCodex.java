@@ -4,6 +4,7 @@ import dev.morphia.annotations.Entity;
 import dev.morphia.annotations.Transient;
 import emu.grasscutter.data.GameData;
 import emu.grasscutter.data.excels.CodexAnimalData;
+import emu.grasscutter.data.excels.CodexViewpointData;
 import emu.grasscutter.game.entity.EntityMonster;
 import emu.grasscutter.game.entity.GameEntity;
 import emu.grasscutter.game.inventory.GameItem;
@@ -45,7 +46,6 @@ public class PlayerCodex {
 
     public void setPlayer(Player player) {
         this.player = player;
-        this.fixReliquaries();
     }
 
     public void checkAddedItem(GameItem item) {
@@ -114,17 +114,15 @@ public class PlayerCodex {
             });
     }
 
-    @Deprecated  // Maybe remove this if we ever stop caring about older dbs
-    private void fixReliquaries() {
-        // Migrate older database entries which were using non-canonical forms of itemIds
-        val newReliquaries = new HashSet<Integer>();
-        this.unlockedReliquary.forEach(i -> newReliquaries.add((i/10)*10));
-        this.unlockedReliquary = newReliquaries;
-
-        GameData.getCodexReliquaryArrayList().stream()
-            .filter(x -> !this.getUnlockedReliquarySuitCodex().contains(x.getId()))
-            .filter(x -> this.getUnlockedReliquary().containsAll(x.getIds()))
-            .forEach(x -> this.getUnlockedReliquarySuitCodex().add(x.getId()));
+    public void checkUnlockedViewPoints(CodexViewpointData viewpoint) {
+        this.getUnlockedView().add(viewpoint.getId());
         this.player.save();
+        this.player.sendPacket(new PacketCodexDataUpdateNotify(7, viewpoint.getId()));
+    }
+
+    public void checkBook(int bookId) {
+        this.getUnlockedBook().add(bookId);
+        this.player.save();
+        this.player.sendPacket(new PacketCodexDataUpdateNotify(5, bookId));
     }
 }

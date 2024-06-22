@@ -16,7 +16,6 @@ import emu.grasscutter.game.props.WatcherTriggerType;
 import emu.grasscutter.game.quest.enums.LogicType;
 import emu.grasscutter.game.quest.enums.QuestContent;
 import emu.grasscutter.game.world.Scene;
-import emu.grasscutter.net.proto.TrialAvatarGrantRecordOuterClass;
 import emu.grasscutter.server.packet.send.PacketDungeonDataNotify;
 import emu.grasscutter.server.packet.send.PacketDungeonReviseLevelNotify;
 import emu.grasscutter.server.packet.send.PacketDungeonWayPointNotify;
@@ -29,6 +28,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.val;
+import messages.general.avatar.GrantReason;
 import messages.scene.entity.WeeklyBossResinDiscountInfo;
 import org.anime_game_servers.gi_lua.models.ScriptArgs;
 import org.anime_game_servers.gi_lua.models.constants.EventType;
@@ -229,7 +229,7 @@ public class DungeonManager {
                                 ActivityType.NEW_ACTIVITY_TRIAL_AVATAR, TrialAvatarActivityHandler.class)
                             .map(TrialAvatarActivityHandler::getBattleAvatarsList)
                             .ifPresent(battleAvatars -> player.addTrialAvatarsForDungeon(
-                                battleAvatars, TrialAvatarGrantRecordOuterClass.TrialAvatarGrantRecord.GrantReason.GRANT_REASON_BY_TRIAL_AVATAR_ACTIVITY));
+                                battleAvatars, GrantReason.GRANT_BY_TRIAL_AVATAR_ACTIVITY));
 
                     case DUNGEON_PLAY_TYPE_MIST_TRIAL -> {} // TODO
                 }
@@ -238,7 +238,7 @@ public class DungeonManager {
                 Optional.ofNullable(GameData.getDungeonElementChallengeDataMap().get(getDungeonData().getId()))
                     .map(DungeonElementChallengeData::getTrialAvatarId)
                     .ifPresent(trialAvatarId -> player.addTrialAvatarsForDungeon(
-                        trialAvatarId, TrialAvatarGrantRecordOuterClass.TrialAvatarGrantRecord.GrantReason.GRANT_REASON_BY_DUNGEON_ELEMENT_CHALLENGE));
+                        trialAvatarId, GrantReason.GRANT_BY_DUNGEON_ELEMENT_CHALLENGE));
         }
         if (player.getTeamManager().isUseTrialTeam()){
             player.getTeamManager().updateTeamEntities(false);

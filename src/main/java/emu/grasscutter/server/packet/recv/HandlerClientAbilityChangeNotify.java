@@ -1,22 +1,17 @@
 package emu.grasscutter.server.packet.recv;
 
 import emu.grasscutter.game.player.Player;
-import emu.grasscutter.net.packet.Opcodes;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.ClientAbilityChangeNotifyOuterClass.ClientAbilityChangeNotify;
-import emu.grasscutter.net.proto.AbilityInvokeEntryOuterClass.AbilityInvokeEntry;
-import emu.grasscutter.net.packet.PacketHandler;
+import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.server.game.GameSession;
+import lombok.val;
+import messages.ability.ClientAbilityChangeNotify;
 
-@Opcodes(PacketOpcodes.ClientAbilityChangeNotify)
-public class HandlerClientAbilityChangeNotify extends PacketHandler {
+public class HandlerClientAbilityChangeNotify extends TypedPacketHandler<ClientAbilityChangeNotify> {
 
 	@Override
-	public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
-		ClientAbilityChangeNotify notif = ClientAbilityChangeNotify.parseFrom(payload);
-
+	public void handle(GameSession session, byte[] header, ClientAbilityChangeNotify notif) throws Exception {
 		Player player = session.getPlayer();
-		for (AbilityInvokeEntry entry : notif.getInvokesList()) {
+		for (val entry : notif.getInvokes()) {
 			player.getAbilityManager().onAbilityInvoke(entry);
 			player.getAbilityInvokeHandler().addEntry(entry.getForwardType(), entry);
 		}

@@ -2,28 +2,23 @@ package emu.grasscutter.server.packet.send;
 
 import java.util.List;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.AbilityInvokeEntryOuterClass.AbilityInvokeEntry;
-import emu.grasscutter.net.proto.ClientAbilityInitFinishNotifyOuterClass.ClientAbilityInitFinishNotify;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.ability.AbilityInvokeEntry;
+import messages.ability.ClientAbilityInitFinishNotify;
 
-public class PacketClientAbilityInitFinishNotify extends BasePacket {
-	
+public class PacketClientAbilityInitFinishNotify extends BaseTypedPacket<ClientAbilityInitFinishNotify> {
+
 	public PacketClientAbilityInitFinishNotify(List<AbilityInvokeEntry> entries) {
-		super(PacketOpcodes.ClientAbilityInitFinishNotify, true);
+		super(new ClientAbilityInitFinishNotify(), true);
 
 		int entityId = 0;
-		
-		if (entries.size() > 0) {
+
+		if (!entries.isEmpty()) {
 			AbilityInvokeEntry entry = entries.get(0);
 			entityId = entry.getEntityId();
 		}
-		
-		ClientAbilityInitFinishNotify proto = ClientAbilityInitFinishNotify.newBuilder()
-				.setEntityId(entityId)
-				.addAllInvokes(entries)
-				.build();
-		
-		this.setData(proto);
+
+        proto.setEntityId(entityId);
+        proto.setInvokes(entries);
 	}
 }

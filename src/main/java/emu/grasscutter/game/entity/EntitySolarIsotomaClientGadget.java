@@ -3,15 +3,15 @@ package emu.grasscutter.game.entity;
 import emu.grasscutter.game.entity.platform.EntitySolarIsotomaElevatorPlatform;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.world.Scene;
-import emu.grasscutter.net.proto.EvtCreateGadgetNotifyOuterClass;
 import lombok.Getter;
+import messages.battle.EvtCreateGadgetNotify;
 
 public class EntitySolarIsotomaClientGadget extends EntityClientGadget {
     public static final int GADGET_ID = 41038001;
     public static final int ELEVATOR_GADGET_ID = 41038002;
     @Getter private EntityGadget platformGadget;
 
-    public EntitySolarIsotomaClientGadget(Scene scene, Player player, EvtCreateGadgetNotifyOuterClass.EvtCreateGadgetNotify notify) {
+    public EntitySolarIsotomaClientGadget(Scene scene, Player player, EvtCreateGadgetNotify notify) {
         super(scene, player, notify);
     }
 

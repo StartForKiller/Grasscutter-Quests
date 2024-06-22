@@ -55,12 +55,8 @@ import emu.grasscutter.game.tower.TowerManager;
 import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.game.world.World;
 import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.proto.AbilityInvokeEntryOuterClass.AbilityInvokeEntry;
-import emu.grasscutter.net.proto.AttackResultOuterClass.AttackResult;
-import emu.grasscutter.net.proto.CombatInvokeEntryOuterClass.CombatInvokeEntry;
 import emu.grasscutter.net.proto.PlayerApplyEnterMpResultNotifyOuterClass;
 import emu.grasscutter.net.proto.PropChangeReasonOuterClass.PropChangeReason;
-import emu.grasscutter.net.proto.TrialAvatarGrantRecordOuterClass.TrialAvatarGrantRecord.GrantReason;
 import emu.grasscutter.server.event.player.PlayerJoinEvent;
 import emu.grasscutter.server.event.player.PlayerQuitEvent;
 import emu.grasscutter.server.game.GameServer;
@@ -76,11 +72,15 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
+import messages.ability.AbilityInvokeEntry;
+import messages.battle.AttackResult;
+import messages.battle.CombatInvokeEntry;
 import messages.chat.FriendEnterHomeOption;
 import messages.chat.SocialDetail;
 import messages.chat.SocialShowAvatarInfo;
 import messages.gadget.GadgetInteractReq;
 import messages.general.ProfilePicture;
+import messages.general.avatar.GrantReason;
 import messages.general.avatar.ShowAvatarInfo;
 import messages.scene.PlayerLocationInfo;
 import messages.scene.PlayerWorldLocationInfo;
@@ -95,6 +95,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Collectors;
 
 import static emu.grasscutter.config.Configuration.GAME_OPTIONS;
 
@@ -142,6 +143,7 @@ public class Player {
     @Getter private Map<Integer, ActiveCookCompoundData> activeCookCompounds;
     @Getter private Map<Integer, Integer> questGlobalVariables;
     @Getter private Map<Integer, Integer> openStates;
+    @Getter private Map<Integer, Map<Integer, Boolean>> sceneTags;
     @Getter @Setter private Map<Integer, Set<Integer>> unlockedSceneAreas;
     @Getter @Setter private Map<Integer, Set<Integer>> unlockedScenePoints;
     @Getter @Setter private List<Integer> chatEmojiIdList;
@@ -272,6 +274,7 @@ public class Player {
         this.unlockedRecipies = new HashMap<>();
         this.questGlobalVariables = new HashMap<>();
         this.openStates = new HashMap<>();
+        this.sceneTags = new HashMap<>();
         this.unlockedSceneAreas = new HashMap<>();
         this.unlockedScenePoints = new HashMap<>();
         this.chatEmojiIdList = new ArrayList<>();
@@ -408,6 +411,15 @@ public class Player {
 
     public synchronized void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public void visitScene(int sceneId) {
+        val sceneTagData = GameData.getSceneTagDataMap().values();
+        val tags = this.sceneTags.computeIfAbsent(sceneId, k -> new HashMap<>());
+        sceneTagData.stream()
+                .filter(tagData -> tagData.getSceneId() == sceneId && tagData.isDefaultValid())
+                .map(SceneTagData::getId)
+                .forEach(k -> tags.putIfAbsent(k, true));
     }
 
     synchronized public void setClimate(ClimateType climate) {
@@ -869,7 +881,7 @@ public class Player {
         getTeamManager().setupTrialAvatarTeamForQuest();
         if (!addTrialAvatar(
             trialAvatarId,
-            GrantReason.GRANT_REASON_BY_QUEST,
+            GrantReason.GRANT_BY_QUEST,
             questMainId)) return false;
         // Packet, mimic official server behaviour, necessary to stop player from modifying team
         sendPacket(new PacketAvatarTeamUpdateNotify(this));
@@ -1569,4 +1581,17 @@ public class Player {
         }
     }
 
+    public void setSceneTag(int sceneId, int sceneTagNumber, Boolean value) {
+        this.getSceneTags().computeIfAbsent(sceneId, k -> new HashMap<>()).put(sceneTagNumber, value);
+        this.sendPacket(new PacketSceneDataNotify(this));
+        this.sendPacket(new PacketPlayerWorldSceneInfoListNotify(this));
+    }
+
+    public List<Integer> getSceneTagList(int sceneId) {
+        return this.sceneTags.getOrDefault(sceneId, new HashMap<>())
+                .entrySet().stream()
+                .filter(Map.Entry::getValue)
+                .map(Map.Entry::getKey)
+                .toList();
+    }
 }

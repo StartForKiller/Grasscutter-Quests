@@ -5,7 +5,6 @@ import emu.grasscutter.net.packet.*;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.game.GameSession.SessionState;
 import emu.grasscutter.server.packet.send.PacketPlayerLoginRsp;
-import emu.grasscutter.server.packet.send.PacketTakeAchievementRewardReq;
 import messages.player.PlayerLoginReq;
 
  // Sends initial data packets
@@ -40,7 +39,6 @@ public class HandlerPlayerLoginReq extends TypedPacketHandler<PlayerLoginReq> {
 
         // Final packet to tell client logging in is done
         session.send(new PacketPlayerLoginRsp(session));
-        session.send(new PacketTakeAchievementRewardReq(session));
     }
 
 }

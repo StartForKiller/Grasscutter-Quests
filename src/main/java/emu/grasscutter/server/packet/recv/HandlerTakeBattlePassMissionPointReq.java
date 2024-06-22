@@ -1,20 +1,15 @@
 package emu.grasscutter.server.packet.recv;
 
-import emu.grasscutter.net.packet.Opcodes;
-import emu.grasscutter.net.packet.PacketHandler;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.TakeBattlePassMissionPointReqOuterClass.TakeBattlePassMissionPointReq;
+import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketTakeBattlePassMissionPointRsp;
+import messages.battle_pass.TakeBattlePassMissionPointReq;
 
-@Opcodes(PacketOpcodes.TakeBattlePassMissionPointReq)
-public class HandlerTakeBattlePassMissionPointReq extends PacketHandler {
+public class HandlerTakeBattlePassMissionPointReq extends TypedPacketHandler<TakeBattlePassMissionPointReq> {
 
     @Override
-    public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
-        var req = TakeBattlePassMissionPointReq.parseFrom(payload);
-
-        session.getPlayer().getBattlePassManager().takeMissionPoint(req.getMissionIdListList());
+    public void handle(GameSession session, byte[] header, TakeBattlePassMissionPointReq req) throws Exception {
+        session.getPlayer().getBattlePassManager().takeMissionPoint(req.getMissionIdList());
 
         session.send(new PacketTakeBattlePassMissionPointRsp());
     }

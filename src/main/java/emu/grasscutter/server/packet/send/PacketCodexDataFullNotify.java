@@ -45,6 +45,7 @@ public class PacketCodexDataFullNotify extends BasePacket {
         CodexTypeData.Builder reliquaryData = CodexTypeData.newBuilder()
                 .setTypeValue(8);
 
+        //Quests
         player.getQuestManager().forEachMainQuest(mainQuest -> {
             if(mainQuest.isFinished()){
                 var codexQuest = GameData.getCodexQuestDataIdMap().get(mainQuest.getParentQuestId());
@@ -54,6 +55,7 @@ public class PacketCodexDataFullNotify extends BasePacket {
             }
         });
 
+        //Weapons
         player.getCodex().getUnlockedWeapon().forEach(weapon -> {
             var codexWeapon = GameData.getCodexWeaponDataIdMap().get(weapon);
             if(codexWeapon != null){
@@ -61,6 +63,7 @@ public class PacketCodexDataFullNotify extends BasePacket {
             }
         });
 
+        //Animals
         player.getCodex().getUnlockedAnimal().forEach((animal, amount) -> {
             var codexAnimal = GameData.getCodexAnimalDataMap().get(animal);
             if(codexAnimal != null){
@@ -68,13 +71,24 @@ public class PacketCodexDataFullNotify extends BasePacket {
             }
         });
 
+        //Materials
         player.getCodex().getUnlockedMaterial().forEach(material -> {
             var codexMaterial = GameData.getCodexMaterialDataIdMap().get(material);
-            if(codexMaterial != null){
+            if (codexMaterial != null) {
                 materialTypeData.addCodexIdList(codexMaterial.getId()).addAllHaveViewedList(Collections.singleton(true));
             }
         });
 
+        //Books
+        player.getCodex().getUnlockedBook().forEach(view -> bookTypeData.addCodexIdList(view).addAllHaveViewedList(Collections.singleton(true)));
+
+        //Tips
+        //TODO: Tips
+
+        //Views
+        player.getCodex().getUnlockedView().forEach(view -> viewTypeData.addCodexIdList(view).addAllHaveViewedList(Collections.singleton(true)));
+
+        //Reliquary
         player.getCodex().getUnlockedReliquarySuitCodex().forEach(reliquarySuit -> {
             reliquaryData.addCodexIdList(reliquarySuit).addAllHaveViewedList(Collections.singleton(true));
         });

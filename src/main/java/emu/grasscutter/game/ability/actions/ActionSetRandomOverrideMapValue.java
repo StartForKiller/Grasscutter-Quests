@@ -1,22 +1,18 @@
 package emu.grasscutter.game.ability.actions;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import emu.grasscutter.Grasscutter;
 import emu.grasscutter.data.binout.AbilityModifier.AbilityModifierAction;
 import emu.grasscutter.game.ability.Ability;
 import emu.grasscutter.game.entity.GameEntity;
-import emu.grasscutter.net.proto.AbilityActionSetRandomOverrideMapValueOuterClass.AbilityActionSetRandomOverrideMapValue;
+import messages.ability.action.AbilityActionSetRandomOverrideMapValue;
 
 @AbilityAction(AbilityModifierAction.Type.SetRandomOverrideMapValue)
 public class ActionSetRandomOverrideMapValue extends AbilityActionHandler {
     @Override
-    public boolean execute(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public boolean execute(Ability ability, AbilityModifierAction action, byte[] abilityData, GameEntity target) {
         AbilityActionSetRandomOverrideMapValue valueProto;
         try {
-            valueProto = AbilityActionSetRandomOverrideMapValue.parseFrom(abilityData);
-        } catch (InvalidProtocolBufferException e) {
+            valueProto = AbilityActionSetRandomOverrideMapValue.parseBy(abilityData, ability.getPlayerOwner().getSession().getVersion());
+        } catch (Exception e) {
             return false;
         }
 

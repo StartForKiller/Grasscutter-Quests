@@ -1,18 +1,11 @@
 package emu.grasscutter.server.packet.send;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.BuyBattlePassLevelRspOuterClass.BuyBattlePassLevelRsp;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.battle_pass.BuyBattlePassLevelRsp;
 
-public class PacketBuyBattlePassLevelRsp extends BasePacket {
-	
+public class PacketBuyBattlePassLevelRsp extends BaseTypedPacket<BuyBattlePassLevelRsp> {
+
 	public PacketBuyBattlePassLevelRsp(int buyLevel) {
-		super(PacketOpcodes.BuyBattlePassLevelRsp);
-		
-		BuyBattlePassLevelRsp proto = BuyBattlePassLevelRsp.newBuilder()
-				.setBuyLevel(buyLevel)
-				.build();
-		
-		this.setData(proto);
+		super(new BuyBattlePassLevelRsp(buyLevel));
 	}
 }

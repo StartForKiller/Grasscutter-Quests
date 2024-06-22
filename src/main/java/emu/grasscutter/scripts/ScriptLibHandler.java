@@ -1495,7 +1495,8 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
     public int SetPlatformRouteId(GroupEventLuaContext context, int entityConfigId, int routeId) {
         logger.info("[LUA] Call SetPlatformRouteId {} {}", entityConfigId, routeId);
 
-        val entity =  context.getSceneScriptManager().getScene().getEntityByConfigId(entityConfigId, context.getCurrentGroup().getGroupInfo().getId());
+        val scene = context.getSceneScriptManager().getScene();
+        val entity = scene.getEntityByConfigId(entityConfigId, context.getCurrentGroup().getGroupInfo().getId());
         if(entity == null){
             return 1;
         }
@@ -1515,7 +1516,10 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
         }
 
         configRoute.setRouteId(routeId);
-        context.getSceneScriptManager().getScene().broadcastPacket(new PacketPlatformChangeRouteNotify(entityGadget));
+        configRoute.setStartSceneTime(scene.getSceneTime());
+        configRoute.setStartIndex(0);
+        entityGadget.schedulePlatform();
+        scene.broadcastPacket(new PacketPlatformChangeRouteNotify(entityGadget));
         return 0;
     }
 

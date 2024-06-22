@@ -1,13 +1,10 @@
 package emu.grasscutter.server.packet.send;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.TakeBattlePassMissionPointRspOuterClass;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.battle_pass.TakeBattlePassMissionPointRsp;
 
-import java.util.List;
-
-public class PacketTakeBattlePassMissionPointRsp extends BasePacket {
+public class PacketTakeBattlePassMissionPointRsp extends BaseTypedPacket<TakeBattlePassMissionPointRsp> {
     public PacketTakeBattlePassMissionPointRsp() {
-        super(PacketOpcodes.TakeBattlePassMissionPointRsp);
+        super(new TakeBattlePassMissionPointRsp()); // TODO also send missions?
     }
 }

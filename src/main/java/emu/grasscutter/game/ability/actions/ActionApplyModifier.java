@@ -12,7 +12,7 @@ import emu.grasscutter.game.entity.GameEntity;
 @AbilityAction(AbilityModifierAction.Type.ApplyModifier)
 public class ActionApplyModifier extends AbilityActionHandler {
     @Override
-    public boolean execute(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public boolean execute(Ability ability, AbilityModifierAction action, byte[] abilityData, GameEntity target) {
         //var modifierData = ability.getData().modifiers.get(action.modifierName);
         //if(modifierData == null) {
         //    Grasscutter.getLogger().debug("Modifier {} not found", action.modifierName);

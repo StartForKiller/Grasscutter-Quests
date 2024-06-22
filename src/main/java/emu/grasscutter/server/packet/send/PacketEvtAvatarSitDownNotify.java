@@ -1,20 +1,11 @@
 package emu.grasscutter.server.packet.send;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.EvtAvatarSitDownNotifyOuterClass.EvtAvatarSitDownNotify;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.battle.EvtAvatarSitDownNotify;
 
-public class PacketEvtAvatarSitDownNotify extends BasePacket {
+public class PacketEvtAvatarSitDownNotify extends BaseTypedPacket<EvtAvatarSitDownNotify> {
 
     public PacketEvtAvatarSitDownNotify(EvtAvatarSitDownNotify notify) {
-        super(PacketOpcodes.EvtAvatarSitDownNotify);
-
-        EvtAvatarSitDownNotify proto = EvtAvatarSitDownNotify.newBuilder()
-                .setEntityId(notify.getEntityId())
-                .setPosition(notify.getPosition())
-                .setChairId(notify.getChairId())
-                .build();
-
-        this.setData(proto);
+        super(new EvtAvatarSitDownNotify(notify.getEntityId(), notify.getPosition(), notify.getChairId()));
     }
 }

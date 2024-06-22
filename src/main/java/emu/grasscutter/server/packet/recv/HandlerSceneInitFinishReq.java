@@ -23,10 +23,10 @@ public class HandlerSceneInitFinishReq extends TypedPacketHandler<SceneInitFinis
 		session.send(new PacketWorldPlayerInfoNotify(session.getPlayer().getWorld()));
 		session.send(new PacketWorldDataNotify(session.getPlayer().getWorld()));
         session.send(new PacketWorldOwnerBlossomBriefInfoNotify(session.getPlayer().getWorld()));
-		session.send(new PacketPlayerWorldSceneInfoListNotify());
+		session.send(new PacketPlayerWorldSceneInfoListNotify(session.getPlayer()));
 		session.send(new BasePacket(PacketOpcodes.SceneForceUnlockNotify));
 		session.send(new PacketHostPlayerNotify(session.getPlayer().getWorld()));
-
+		session.send(new PacketSceneDataNotify(session.getPlayer()));
 		session.send(new PacketSceneTimeNotify(session.getPlayer()));
 		session.send(new PacketPlayerGameTimeNotify(session.getPlayer()));
 		session.send(new PacketPlayerEnterSceneInfoNotify(session.getPlayer()));

@@ -15,6 +15,7 @@ public abstract class BaseRoute {
     @Getter @Setter private Position startRot;
     @Getter @Setter private int startSceneTime;
     @Getter @Setter private int stopSceneTime;
+    @Getter @Setter private int startIndex;
 
     BaseRoute(Position startRot, boolean isStarted, boolean isActive) {
         this.startRot = startRot;
@@ -24,8 +25,8 @@ public abstract class BaseRoute {
 
     BaseRoute(SceneGadget gadget) {
         this.startRot = new Position(gadget.getRot());
-        this.isStarted = gadget.isStartRoute();
-        this.isActive = gadget.isStartRoute();
+        this.isStarted = false;
+        this.isActive = true;
     }
 
     public static BaseRoute fromSceneGadget(SceneGadget sceneGadget) {
@@ -38,22 +39,15 @@ public abstract class BaseRoute {
     }
 
     public boolean startRoute(Scene scene) {
-        if (this.isStarted) {
-            return false;
-        }
         this.isStarted = true;
         this.isActive = true;
-        this.startSceneTime = scene.getSceneTime()+300;
+        this.startSceneTime = scene.getSceneTime();
 
         return true;
     }
 
     public boolean stopRoute(Scene scene) {
-        if (!this.isStarted) {
-            return false;
-        }
         this.isStarted = false;
-        this.isActive = false;
         this.startSceneTime = scene.getSceneTime();
         this.stopSceneTime = scene.getSceneTime();
 
@@ -95,6 +89,7 @@ public abstract class BaseRoute {
         if (!isStarted) {
             result.setStopSceneTime(stopSceneTime);
         }
+        result.setStartIndex(startIndex);
         return result;
     }
 }

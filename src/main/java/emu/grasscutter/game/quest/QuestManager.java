@@ -104,20 +104,19 @@ public class QuestManager extends BasePlayerManager {
     }
 
     public void onLogin() {
-
         List<GameMainQuest> activeQuests = getActiveMainQuests();
-        List<GameQuest> activeSubs = new ArrayList<>(activeQuests.size());
         for (GameMainQuest quest : activeQuests) {
+            val rewindTarget = quest.getRewindTarget();
             List<Position> rewindPos = quest.rewind(); // <pos, rotation>
-            var activeQuest = quest.getActiveQuests();
             if (rewindPos != null) {
                 getPlayer().getPosition().set(rewindPos.get(0));
                 getPlayer().getRotation().set(rewindPos.get(1));
             }
-            if(activeQuest!=null && rewindPos!=null){
-                //activeSubs.add(activeQuest);
-                //player.sendPacket(new PacketQuestProgressUpdateNotify(activeQuest));
-            }
+            //execute all the beginExec before the rewind target on UNFINISHED quests on login only
+            quest.getChildQuests().values().stream().filter(p -> p.getQuestData().getOrder() < rewindTarget.getQuestData().getOrder()
+                    && p.getState().getValue() == QuestState.QUEST_STATE_UNFINISHED.getValue()).forEach(q -> {
+                q.getQuestData().getBeginExec().forEach(e -> getPlayer().getServer().getQuestSystem().triggerExec(q, e, e.getParam()));
+            });
             quest.checkProgress();
         }
         player.getActivityManager().triggerActivityConditions();

@@ -1,21 +1,16 @@
 package emu.grasscutter.server.packet.recv;
 
-import emu.grasscutter.net.packet.Opcodes;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.BuyBattlePassLevelReqOuterClass.BuyBattlePassLevelReq;
-import emu.grasscutter.net.packet.PacketHandler;
+import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketBuyBattlePassLevelRsp;
+import messages.battle_pass.BuyBattlePassLevelReq;
 
-@Opcodes(PacketOpcodes.BuyBattlePassLevelReq)
-public class HandlerBuyBattlePassLevelReq extends PacketHandler {
-	
+public class HandlerBuyBattlePassLevelReq extends TypedPacketHandler<BuyBattlePassLevelReq> {
+
 	@Override
-	public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
-		BuyBattlePassLevelReq req = BuyBattlePassLevelReq.parseFrom(payload);
-		
+	public void handle(GameSession session, byte[] header, BuyBattlePassLevelReq req) throws Exception {
 		int buyLevel = session.getPlayer().getBattlePassManager().buyLevels(req.getBuyLevel());
-		
+
 		session.send(new PacketBuyBattlePassLevelRsp(buyLevel));
 	}
 

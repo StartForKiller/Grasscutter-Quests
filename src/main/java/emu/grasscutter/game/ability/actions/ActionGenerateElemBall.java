@@ -1,10 +1,5 @@
 package emu.grasscutter.game.ability.actions;
 
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import emu.grasscutter.Grasscutter;
-import emu.grasscutter.Loggers;
 import emu.grasscutter.data.GameData;
 import emu.grasscutter.data.binout.AbilityModifier.AbilityModifierAction;
 import emu.grasscutter.data.binout.AbilityModifier.AbilityModifierAction.DropType;
@@ -13,21 +8,20 @@ import emu.grasscutter.game.ability.Ability;
 import emu.grasscutter.game.entity.EntityAvatar;
 import emu.grasscutter.game.entity.EntityItem;
 import emu.grasscutter.game.entity.GameEntity;
-import emu.grasscutter.game.props.ItemUseOp;
 import emu.grasscutter.game.props.SceneType;
-import emu.grasscutter.net.proto.AbilityActionGenerateElemBallOuterClass.AbilityActionGenerateElemBall;
 import emu.grasscutter.utils.Position;
+import messages.ability.action.AbilityActionGenerateElemBall;
 
 @AbilityAction(AbilityModifierAction.Type.GenerateElemBall)
 public class ActionGenerateElemBall extends AbilityActionHandler {
     @Override
-    public boolean execute(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public boolean execute(Ability ability, AbilityModifierAction action, byte[] abilityData, GameEntity target) {
         GameEntity owner = ability.getOwner();
 
         AbilityActionGenerateElemBall generateElemBall;
         try {
-            generateElemBall = AbilityActionGenerateElemBall.parseFrom(abilityData);
-        } catch (InvalidProtocolBufferException e) {
+            generateElemBall = AbilityActionGenerateElemBall.parseBy(abilityData, ability.getPlayerOwner().getSession().getVersion());
+        } catch (Exception e) {
             return false;
         }
 

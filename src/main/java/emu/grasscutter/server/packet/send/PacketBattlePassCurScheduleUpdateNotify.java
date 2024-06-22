@@ -1,27 +1,15 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.game.player.Player;
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.*;
-import emu.grasscutter.net.proto.BattlePassCurScheduleUpdateNotifyOuterClass.BattlePassCurScheduleUpdateNotify;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.battle_pass.BattlePassCurScheduleUpdateNotify;
 
-import java.util.ArrayList;
-import java.util.List;
+public class PacketBattlePassCurScheduleUpdateNotify extends BaseTypedPacket<BattlePassCurScheduleUpdateNotify> {
 
-public class PacketBattlePassCurScheduleUpdateNotify extends BasePacket {
-	
     public PacketBattlePassCurScheduleUpdateNotify(Player player) {
-        super(PacketOpcodes.BattlePassCurScheduleUpdateNotify);
+        super(new BattlePassCurScheduleUpdateNotify());
 
-        var proto = BattlePassCurScheduleUpdateNotify.newBuilder();
-
-        proto
-        	.setHaveCurSchedule(true)
-        	.setCurSchedule(player.getBattlePassManager().getScheduleProto())
-        	.build();
-
-        setData(proto.build());
-
+        proto.setHaveCurSchedule(true);
+        proto.setCurSchedule(player.getBattlePassManager().getScheduleProto());
     }
 }

@@ -12,24 +12,13 @@ import emu.grasscutter.game.entity.EntityClientGadget;
 import emu.grasscutter.game.entity.EntityItem;
 import emu.grasscutter.game.entity.EntityMonster;
 import emu.grasscutter.game.entity.GameEntity;
-import emu.grasscutter.game.inventory.GameItem;
-import emu.grasscutter.game.inventory.MaterialType;
 import emu.grasscutter.game.player.BasePlayerManager;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.ElementType;
 import emu.grasscutter.game.props.FightProperty;
-import emu.grasscutter.game.props.ItemUseOp;
-import emu.grasscutter.game.props.ItemUseTarget;
 import emu.grasscutter.game.props.MonsterType;
 import emu.grasscutter.game.props.WeaponType;
-import emu.grasscutter.game.props.ItemUseAction.ItemUseAction;
-import emu.grasscutter.game.props.ItemUseAction.ItemUseAddEnergy;
-import emu.grasscutter.net.proto.AbilityActionGenerateElemBallOuterClass.AbilityActionGenerateElemBall;
-import emu.grasscutter.net.proto.AbilityIdentifierOuterClass.AbilityIdentifier;
-import emu.grasscutter.net.proto.AbilityInvokeEntryOuterClass.AbilityInvokeEntry;
-import emu.grasscutter.net.proto.AttackResultOuterClass.AttackResult;
 import emu.grasscutter.net.proto.ChangeEnergyReasonOuterClass.ChangeEnergyReason;
-import emu.grasscutter.net.proto.EvtBeingHitInfoOuterClass.EvtBeingHitInfo;
 import emu.grasscutter.net.proto.PropChangeReasonOuterClass.PropChangeReason;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.utils.Position;
@@ -45,6 +34,10 @@ import java.util.concurrent.ThreadLocalRandom;
 import static emu.grasscutter.config.Configuration.GAME_OPTIONS;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import lombok.val;
+import messages.ability.AbilityInvokeEntry;
+import messages.ability.action.AbilityActionGenerateElemBall;
+import messages.battle.EvtBeingHitInfo;
 
 public class EnergyManager extends BasePlayerManager {
     private final Object2IntMap<EntityAvatar> avatarNormalProbabilities;
@@ -139,7 +132,7 @@ public class EnergyManager extends BasePlayerManager {
         // We are not handling this correctly at the moment.
 
         // Get action info.
-        AbilityActionGenerateElemBall action = AbilityActionGenerateElemBall.parseFrom(invoke.getAbilityData());
+        val action = AbilityActionGenerateElemBall.parseBy(invoke.getAbilityData(), player.getSession().getVersion());
         if (action == null) {
             return;
         }
@@ -220,7 +213,7 @@ public class EnergyManager extends BasePlayerManager {
 
     public void handleAttackHit(EvtBeingHitInfo hitInfo) {
         // Get the attack result.
-        AttackResult attackRes = hitInfo.getAttackResult();
+        val attackRes = hitInfo.getAttackResult();
 
         // Make sure the attack was performed by the currently active avatar. If not, we ignore the hit.
         Optional<EntityAvatar> attackerEntity = this.getCastingAvatarEntityForEnergy(attackRes.getAttackerId());
@@ -240,7 +233,7 @@ public class EnergyManager extends BasePlayerManager {
         }
 
         // Get the ability that caused this hit.
-        AbilityIdentifier ability = attackRes.getAbilityIdentifier();
+        val ability = attackRes.getAbilityIdentifier();
 
         // Make sure there is no actual "ability" associated with the hit. For now, this is how we
         // identify normal and charged attacks. Note that this is not completely accurate:
@@ -249,8 +242,8 @@ public class EnergyManager extends BasePlayerManager {
         //    - There might also be some cases where we incorrectly identify something as a normal or
         //      charged attack that is not (Diluc's E?).
         //    - Catalyst normal attacks have an ability, so we don't handle those for now.
-        // ToDo: Fix all of that.
-        if (ability != AbilityIdentifier.getDefaultInstance()) {
+        // ToDo: Fix all of that instead of checking for default value.
+        if(ability == null) {
             return;
         }
 
@@ -386,7 +379,7 @@ public class EnergyManager extends BasePlayerManager {
         EntityAvatar activeEntity = this.player.getTeamManager().getCurrentAvatarEntity();
         return activeEntity.addEnergy(activeEntity.getAvatar().getSkillDepot().getEnergySkillData().getCostElemVal());
     }
-    
+
     public void refillTeamEnergy (PropChangeReason changeReason, boolean isFlat) {
         for (EntityAvatar entityAvatar : this.player.getTeamManager().getActiveTeam()) {
             // giving the exact amount read off the AvatarSkillData.json

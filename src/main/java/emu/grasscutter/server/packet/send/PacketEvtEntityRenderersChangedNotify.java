@@ -1,14 +1,11 @@
 package emu.grasscutter.server.packet.send;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.EvtEntityRenderersChangedNotifyOuterClass;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.battle.EvtEntityRenderersChangedNotify;
 
-public class PacketEvtEntityRenderersChangedNotify extends BasePacket {
+public class PacketEvtEntityRenderersChangedNotify extends BaseTypedPacket<EvtEntityRenderersChangedNotify> {
 
-	public PacketEvtEntityRenderersChangedNotify(EvtEntityRenderersChangedNotifyOuterClass.EvtEntityRenderersChangedNotify req) {
-		super(PacketOpcodes.EvtEntityRenderersChangedNotify, true);
-
-        this.setData(req);
+	public PacketEvtEntityRenderersChangedNotify(EvtEntityRenderersChangedNotify req) {
+		super(req, true);
 	}
 }

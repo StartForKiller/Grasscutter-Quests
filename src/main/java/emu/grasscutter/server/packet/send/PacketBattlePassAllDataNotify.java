@@ -1,39 +1,31 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.data.GameData;
+import emu.grasscutter.data.excels.BattlePassMissionData;
 import emu.grasscutter.game.player.Player;
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.*;
-import emu.grasscutter.net.proto.BattlePassAllDataNotifyOuterClass.BattlePassAllDataNotify;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import lombok.val;
+import messages.battle_pass.BattlePassAllDataNotify;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class PacketBattlePassAllDataNotify extends BasePacket {
+public class PacketBattlePassAllDataNotify extends BaseTypedPacket<BattlePassAllDataNotify> {
     public PacketBattlePassAllDataNotify(Player player) {
-        super(PacketOpcodes.BattlePassAllDataNotify);
+        super(new BattlePassAllDataNotify());
 
-        var proto = BattlePassAllDataNotify.newBuilder();
-        
-        proto
-        	.setHaveCurSchedule(true)
-        	.setCurSchedule(player.getBattlePassManager().getScheduleProto());
+        proto.setHaveCurSchedule(true);
+        proto.setCurSchedule(player.getBattlePassManager().getScheduleProto());
 
-        for (var missionData : GameData.getBattlePassMissionDataMap().values()) {
-        	// Dont send invalid refresh types
-        	if (!missionData.isValidRefreshType()) {
-        		continue;
-        	}
-        	
-        	// Check if player has mission in bp manager. If not, then add an empty proto from the mission data
-        	if (player.getBattlePassManager().hasMission(missionData.getId())) {
-        		proto.addMissionList(player.getBattlePassManager().loadMissionById(missionData.getId()).toProto());
-        	} else {
-        		proto.addMissionList(missionData.toProto());
-        	}
-        }
-
-        setData(proto.build());
+        val missions = GameData.getBattlePassMissionDataMap().values().stream()
+            // Don't send invalid refresh types
+            .filter(BattlePassMissionData::isValidRefreshType)
+            .map(missionData -> {
+                // Check if player has mission in bp manager. If not, then add an empty proto from the mission data
+                if (player.getBattlePassManager().hasMission(missionData.getId())) {
+                    return player.getBattlePassManager().loadMissionById(missionData.getId()).toProto();
+                } else {
+                    return missionData.toProto();
+                }
+            }).toList();
+        proto.setMissionList(missions);
     }
 }

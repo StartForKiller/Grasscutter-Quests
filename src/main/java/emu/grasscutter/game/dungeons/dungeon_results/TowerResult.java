@@ -45,6 +45,6 @@ public class TowerResult extends BaseDungeonResult {
                 CONTINUE_STATE_TYPE_CAN_NOT_CONTINUE_VALUE)
             .addAllFinishedStarCondList(IntStream.rangeClosed(1, this.stars).boxed().toList())
             .setNextFloorId(this.hasNextFloor ? this.nextFloorId : 0)
-            .addAllRewardItemList(this.rewardItems.stream().map(GameItem::toItemParam).toList()));
+            .addAllRewardItemList(this.rewardItems.stream().map(GameItem::toItemParamOld).toList()));
     }
 }

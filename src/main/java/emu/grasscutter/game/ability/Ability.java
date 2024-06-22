@@ -7,10 +7,12 @@ import emu.grasscutter.data.GameData;
 import emu.grasscutter.data.binout.AbilityData;
 import emu.grasscutter.game.entity.GameEntity;
 import emu.grasscutter.game.player.Player;
-import emu.grasscutter.net.proto.AbilityStringOuterClass.AbilityString;
 import it.unimi.dsi.fastutil.objects.Object2FloatMap;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import lombok.Getter;
+import messages.general.ability.AbilityString;
+
+import javax.annotation.Nullable;
 
 public class Ability {
     @Getter private AbilityData data;
@@ -55,10 +57,13 @@ public class Ability {
         return (int)hash;
     }
 
+    @Nullable
     public static String getAbilityName(AbilityString abString) {
-        if(abString.hasStr()) return abString.getStr();
-        if(abString.hasHash()) return GameData.getAbilityHashes().get(abString.getHash());
-
+        if(abString.getType() instanceof AbilityString.Type.Str abStr){
+            return abStr.getValue();
+        }if(abString.getType() instanceof AbilityString.Type.Hash abHash){
+            return GameData.getAbilityHashes().get((int)abHash.getValue());
+        }
         return null;
     }
 }

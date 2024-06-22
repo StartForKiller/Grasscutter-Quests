@@ -9,27 +9,24 @@ import emu.grasscutter.data.excels.TrialReliquaryData;
 import emu.grasscutter.game.entity.EntityWeapon;
 import emu.grasscutter.game.inventory.EquipType;
 import emu.grasscutter.game.inventory.GameItem;
-import emu.grasscutter.game.props.EntityIdType;
-import emu.grasscutter.net.proto.TrialAvatarGrantRecordOuterClass.TrialAvatarGrantRecord.GrantReason;
 import emu.grasscutter.server.packet.send.PacketAvatarEquipChangeNotify;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
 import messages.general.avatar.AvatarInfo;
+import messages.general.avatar.GrantReason;
 import messages.general.avatar.TrialAvatarGrantRecord;
 import messages.general.avatar.TrialAvatarInfo;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class TrialAvatar extends Avatar{
     // trial avatar property
     @Getter @Setter private int trialAvatarId = 0;
     // cannot store to db if grant reason is not integer
-    @Getter @Setter private int grantReason = GrantReason.GRANT_REASON_INVALID.getNumber();
+    @Getter @Setter private GrantReason grantReason = GrantReason.INVALID;
     @Getter @Setter private int fromParentQuestId = 0;
     // so far no outer class or prop value has information of this, but from packet I sniff
     // 1 = normal, 2 = trial avatar
@@ -40,7 +37,7 @@ public class TrialAvatar extends Avatar{
         this.setLevel(trialAvatarParam.get(1));
         this.setPromoteLevel(getMinPromoteLevel(trialAvatarParam.get(1)));
         this.setTrialAvatarId(trialAvatarId);
-        this.setGrantReason(grantReason.getNumber());
+        this.setGrantReason(grantReason);
         this.setFromParentQuestId(fromParentQuestId);
         this.setTrialSkillLevel();
         this.setTrialItems();
@@ -136,7 +133,7 @@ public class TrialAvatar extends Avatar{
     public TrialAvatarInfo trialAvatarInfoProto(){
         val trialAvatar = new TrialAvatarInfo(this.getTrialAvatarId());
 
-        trialAvatar.setGrantRecord(new TrialAvatarGrantRecord(this.getGrantReason(), this.getFromParentQuestId()));
+        trialAvatar.setGrantRecord(new TrialAvatarGrantRecord(this.getGrantReason().encodeToByteArray(getPlayer().getSession().getVersion()), this.getFromParentQuestId()));
 
         if (this.getTrialAvatarId() > 0){ // if it is actual trial avatar
             // add artifacts and weapon for trial character

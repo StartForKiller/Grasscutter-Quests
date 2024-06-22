@@ -8,8 +8,10 @@ import emu.grasscutter.data.GameResource;
 import emu.grasscutter.data.ResourceType;
 import emu.grasscutter.game.props.BattlePassMissionRefreshType;
 import emu.grasscutter.game.props.WatcherTriggerType;
-import emu.grasscutter.net.proto.BattlePassMissionOuterClass.BattlePassMission.MissionStatus;
 import lombok.Getter;
+import lombok.val;
+import messages.battle_pass.BattlePassMission;
+import messages.battle_pass.MissionStatus;
 
 @ResourceType(name = {"BattlePassMissionExcelConfigData.json"})
 @Getter
@@ -54,16 +56,13 @@ public class BattlePassMissionData extends GameResource {
         private String[] paramList;
     }
 
-    public emu.grasscutter.net.proto.BattlePassMissionOuterClass.BattlePassMission toProto() {
-        var protoBuilder = emu.grasscutter.net.proto.BattlePassMissionOuterClass.BattlePassMission.newBuilder();
+    public BattlePassMission toProto() {
+        val protoBuilder = new BattlePassMission(0, getId(), MissionStatus.MISSION_UNFINISHED);
 
-        protoBuilder
-            .setMissionId(getId())
-            .setTotalProgress(this.getProgress())
-            .setRewardBattlePassPoint(this.getAddPoint())
-            .setMissionStatus(MissionStatus.MISSION_STATUS_UNFINISHED)
-            .setMissionType(this.getRefreshType() == null ? 0 : this.getRefreshType().getValue());
+        protoBuilder.setTotalProgress(this.getProgress());
+        protoBuilder.setRewardBattlePassPoint(this.getAddPoint());
+        protoBuilder.setMissionType(this.getRefreshType() == null ? 0 : this.getRefreshType().getValue());
 
-        return protoBuilder.build();
+        return protoBuilder;
     }
 }

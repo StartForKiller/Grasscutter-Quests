@@ -1,86 +1,31 @@
 package emu.grasscutter.server.packet.send;
 
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import emu.grasscutter.data.GameData;
+import emu.grasscutter.game.player.Player;
+import emu.grasscutter.game.props.SceneType;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.scene.PlayerWorldSceneInfoListNotify;
+import messages.scene.PlayerWorldSceneInfo;
+import java.util.ArrayList;
+import java.util.List;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.PlayerWorldSceneInfoListNotifyOuterClass.PlayerWorldSceneInfoListNotify;
-import emu.grasscutter.net.proto.PlayerWorldSceneInfoOuterClass.PlayerWorldSceneInfo;
+public class PacketPlayerWorldSceneInfoListNotify extends BaseTypedPacket<PlayerWorldSceneInfoListNotify> {
 
-public class PacketPlayerWorldSceneInfoListNotify extends BasePacket {
+    public PacketPlayerWorldSceneInfoListNotify(Player player) {
+        super(new PlayerWorldSceneInfoListNotify());
+        List<PlayerWorldSceneInfo> infoList = new ArrayList<>();
 
-    public PacketPlayerWorldSceneInfoListNotify() {
-        super(PacketOpcodes.PlayerWorldSceneInfoListNotify); // Rename opcode later
+        // Iterate over all scenes
+        for (var scene : GameData.getSceneDataMap().values()) {
+            //only send big world info
+            if (scene.getSceneType() != SceneType.SCENE_WORLD) continue;
 
-        PlayerWorldSceneInfoListNotify.Builder proto = PlayerWorldSceneInfoListNotify.newBuilder()
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(1)
-                                .setIsLocked(false)
-                                .build()
-                )
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(3)
-                                .setIsLocked(false)
-                                .addSceneTagIdList(102) // Jade chamber
-                                .addSceneTagIdList(113)
-                                .addSceneTagIdList(117)
+            var worldInfoBuilder = new PlayerWorldSceneInfo();
+            worldInfoBuilder.setSceneId(scene.getId());
 
-                                // Vanarana (Sumeru tree)
-                                .addSceneTagIdList(1093) // Vana_real
-                                // .addSceneTagIdList(1094) // Vana_dream
-                                // .addSceneTagIdList(1095) // Vana_first
-                                // .addSceneTagIdList(1096) // Vana_festival
-
-                                // 3.1 event
-                                .addSceneTagIdList(152)
-                                .addSceneTagIdList(153)
-
-                                // Pyramid
-                                .addSceneTagIdList(1164) // Arena (XMSM_CWLTop)
-                                .addSceneTagIdList(1166) // Pyramid (CWL_Trans_02)
-
-                                // Brute force
-                                //.addAllSceneTagIdList(IntStream.range(1150, 1250).boxed().toList())
-                                .build()
-                )
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(4)
-                                .setIsLocked(false)
-                                .addSceneTagIdList(106)
-                                .addSceneTagIdList(109)
-                                .addSceneTagIdList(117)
-                                .build()
-                )
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(5)
-                                .setIsLocked(false)
-                                .build()
-                )
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(6)
-                                .setIsLocked(false)
-                                .build()
-                )
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(7)
-                                .setIsLocked(false)
-                                .build()
-                )
-                .addInfoList(
-                        PlayerWorldSceneInfo.newBuilder()
-                                .setSceneId(9)
-                                .setIsLocked(false)
-                                .addAllSceneTagIdList(IntStream.range(0, 3000).boxed().toList())
-                                .build()
-                );
-
-        this.setData(proto);
+            worldInfoBuilder.setSceneTagIdList(player.getSceneTagList(scene.getId()));
+            infoList.add(worldInfoBuilder);
+        }
+        proto.setInfoList(infoList);
     }
 }

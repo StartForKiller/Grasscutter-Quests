@@ -12,7 +12,7 @@ import emu.grasscutter.game.entity.EntityWeapon;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.FightProperty;
 import emu.grasscutter.net.proto.ItemHintOuterClass.ItemHint;
-import emu.grasscutter.net.proto.ItemParamOuterClass.ItemParam;
+import emu.grasscutter.net.proto.ItemParamOuterClass;
 import emu.grasscutter.utils.WeightedList;
 import lombok.Getter;
 import lombok.Setter;
@@ -286,7 +286,10 @@ public class GameItem {
             .build();
     }
 
+    public ItemParamOuterClass.ItemParam toItemParamOld() {
+        return ItemParamOuterClass.ItemParam.newBuilder().setItemId(this.itemId).setCount(this.count).build();
+    }
     public ItemParam toItemParam() {
-        return ItemParam.newBuilder().setItemId(this.itemId).setCount(this.count).build();
+        return new ItemParam(this.itemId, this.count);
     }
 }

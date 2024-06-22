@@ -1,20 +1,12 @@
 package emu.grasscutter.server.packet.send;
 
-import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.ActivityTakeWatcherRewardRspOuterClass;
+import emu.grasscutter.net.packet.BaseTypedPacket;
+import messages.activity.ActivityTakeWatcherRewardRsp;
 
-public class PacketActivityTakeWatcherRewardRsp extends BasePacket {
+public class PacketActivityTakeWatcherRewardRsp extends BaseTypedPacket<ActivityTakeWatcherRewardRsp> {
 
 	public PacketActivityTakeWatcherRewardRsp(int activityId, int watcherId) {
-		super(PacketOpcodes.ActivityTakeWatcherRewardRsp);
-
-        var proto = ActivityTakeWatcherRewardRspOuterClass.ActivityTakeWatcherRewardRsp.newBuilder();
-
-        proto.setActivityId(activityId)
-            .setWatcherId(watcherId);
-
-        this.setData(proto);
+		super(new ActivityTakeWatcherRewardRsp(activityId, watcherId));
 	}
 
 }

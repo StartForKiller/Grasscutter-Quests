@@ -4,39 +4,34 @@ import emu.grasscutter.Grasscutter;
 import emu.grasscutter.game.entity.GameEntity;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.FightProperty;
-import emu.grasscutter.net.packet.Opcodes;
-import emu.grasscutter.net.packet.PacketOpcodes;
-import emu.grasscutter.net.proto.AttackResultOuterClass.AttackResult;
-import emu.grasscutter.net.proto.CombatInvocationsNotifyOuterClass.CombatInvocationsNotify;
-import emu.grasscutter.net.proto.CombatInvokeEntryOuterClass.CombatInvokeEntry;
-import emu.grasscutter.net.proto.EvtAnimatorParameterInfoOuterClass.EvtAnimatorParameterInfo;
-import emu.grasscutter.net.proto.EvtBeingHitInfoOuterClass.EvtBeingHitInfo;
-import emu.grasscutter.net.packet.PacketHandler;
+import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.net.proto.PlayerDieTypeOuterClass;
 import emu.grasscutter.server.event.entity.EntityMoveEvent;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketEntityFightPropUpdateNotify;
 import emu.grasscutter.utils.Position;
 import lombok.val;
+import messages.battle.CombatInvocationsNotify;
+import messages.battle.CombatInvokeEntry;
+import messages.battle.EvtAnimatorParameterInfo;
+import messages.battle.EvtBeingHitInfo;
 import messages.general.entity.EntityMoveInfo;
 import messages.scene.entity.MotionState;
 
-@Opcodes(PacketOpcodes.CombatInvocationsNotify)
-public class HandlerCombatInvocationsNotify extends PacketHandler {
+public class HandlerCombatInvocationsNotify extends TypedPacketHandler<CombatInvocationsNotify> {
 
     private float cachedLandingSpeed = 0;
     private long cachedLandingTimeMillisecond = 0;
     private boolean monitorLandingEvent = false;
 
     @Override
-    public void handle(GameSession session, byte[] header, byte[] payload) throws Exception {
-        CombatInvocationsNotify notif = CombatInvocationsNotify.parseFrom(payload);
-        for (CombatInvokeEntry entry : notif.getInvokeListList()) {
+    public void handle(GameSession session, byte[] header, CombatInvocationsNotify notif) throws Exception {
+        for (CombatInvokeEntry entry : notif.getInvokeList()) {
             // Handle combat invoke
             switch (entry.getArgumentType()) {
-                case COMBAT_TYPE_ARGUMENT_EVT_BEING_HIT -> {
-                    EvtBeingHitInfo hitInfo = EvtBeingHitInfo.parseFrom(entry.getCombatData());
-                    AttackResult attackResult = hitInfo.getAttackResult();
+                case COMBAT_EVT_BEING_HIT -> {
+                    val hitInfo = EvtBeingHitInfo.parseBy(entry.getCombatData(), session.getVersion());
+                    val attackResult = hitInfo.getAttackResult();
                     Player player = session.getPlayer();
 
                     // Check if the player is invulnerable.
@@ -49,9 +44,9 @@ public class HandlerCombatInvocationsNotify extends PacketHandler {
                     player.getAttackResults().add(attackResult);
                     player.getEnergyManager().handleAttackHit(hitInfo);
                 }
-                case COMBAT_TYPE_ARGUMENT_ENTITY_MOVE -> {
+                case ENTITY_MOVE -> {
                     // Handle movement
-                    EntityMoveInfo moveInfo = EntityMoveInfo.parseBy(entry.getCombatData().toByteArray(), session.getVersion());
+                    val moveInfo = EntityMoveInfo.parseBy(entry.getCombatData(), session.getVersion());
                     val scene = session.getPlayer().getScene();
                     GameEntity entity = scene != null ? scene.getEntityById(moveInfo.getEntityId()) : null;
                     if (entity != null) {
@@ -101,11 +96,11 @@ public class HandlerCombatInvocationsNotify extends PacketHandler {
                         }
                     }
                 }
-                case COMBAT_TYPE_ARGUMENT_ANIMATOR_PARAMETER_CHANGED -> {
-                    EvtAnimatorParameterInfo paramInfo = EvtAnimatorParameterInfo.parseFrom(entry.getCombatData());
-                    if (paramInfo.getIsServerCache()) {
-                        paramInfo = paramInfo.toBuilder().setIsServerCache(false).build();
-                        entry = entry.toBuilder().setCombatData(paramInfo.toByteString()).build();
+                case COMBAT_ANIMATOR_PARAMETER_CHANGED -> {
+                    val paramInfo = EvtAnimatorParameterInfo.parseBy(entry.getCombatData(), session.getVersion());
+                    if (paramInfo.isServerCache()) {
+                        paramInfo.setServerCache(false);
+                        entry.setCombatData(paramInfo.encodeToByteArray(session.getVersion()));
                     }
                 }
                 default -> {
