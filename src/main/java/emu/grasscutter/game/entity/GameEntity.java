@@ -38,6 +38,7 @@ public abstract class GameEntity {
     @Getter @Setter private int blockId;
     @Getter @Setter private int configId;
     @Getter @Setter private int groupId;
+    @Getter @Setter private int visionType = 1; //TODO
 
     @Getter @Setter private MotionState motionState;
     @Getter @Setter private int lastMoveSceneTimeMs;
@@ -171,7 +172,7 @@ public abstract class GameEntity {
         }
 
         float curHp = getFightProperty(FightProperty.FIGHT_PROP_CUR_HP);
-        if (curHp != Float.POSITIVE_INFINITY && !lockHP || lockHP && curHp <= event.getDamage()) {
+        if (curHp != Float.POSITIVE_INFINITY && !lockHP || (lockHP && !(this instanceof EntityGadget)) && curHp <= event.getDamage()) {
             // Add negative HP to the current HP property.
             this.addFightProperty(FightProperty.FIGHT_PROP_CUR_HP, -(event.getDamage()));
         }

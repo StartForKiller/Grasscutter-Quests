@@ -604,4 +604,14 @@ public class TeamManager extends BasePlayerDataManager {
         // Remove team.
         return getTeams().remove(id) != null;
     }
+
+    public void addAbilityToAvatars(String name) {
+        getActiveTeam().forEach(a -> a.getPlayer().getAbilityManager().addAbilityToEntity(a, name));
+        getActiveTeam().forEach(a -> a.getPlayer().sendPacket(new PacketAbilityChangeNotify(a)));
+    }
+
+    public void removeAbilityFromAvatars(String name) {
+        getActiveTeam().forEach(a -> a.getPlayer().getAbilityManager().removeAbilityFromEntity(a, name));
+        getActiveTeam().forEach(a -> a.getPlayer().sendPacket(new PacketAbilityChangeNotify(a)));
+    }
 }

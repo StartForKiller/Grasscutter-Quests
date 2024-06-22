@@ -146,14 +146,31 @@ public class AbilityModifier implements Serializable {
         public DynamicFloat valueRangeMax;
         public String overrideMapKey;
 
-        public int param1;
-        public int param2;
-        public int param3;
+        @SerializedName(value = "param1"/*, alternate = {"LIOGECEPJAH"} */)
+        public float param1;
+        @SerializedName(value = "param2"/*, alternate = {"FDDPMCCJIKN"} */)
+        public float param2;
+        @SerializedName(value = "param3"/*, alternate = {"KNJMHMKNCKF"} */)
+        public float param3;
+
+        public LuaCallType luaCallType;
+        public boolean isTarget;
+        public String funcName;
 
         public enum DropType {
             LevelControl,
             BigWorldOnly,
             ForceDrop
+        }
+
+        public enum LuaCallType {
+            CurGalleryControlGroup,
+            FromGroup,
+            CurChallengeGroup,
+            SpecificGroup,
+            AbilityGroupSourceGroup,
+            CurScenePlay,
+            CurRogueBossGroup
         }
     }
 

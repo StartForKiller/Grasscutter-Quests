@@ -24,7 +24,9 @@ import emu.grasscutter.data.server.ActivityCondGroup;
 import emu.grasscutter.data.server.DropSubfieldMapping;
 import emu.grasscutter.data.server.DropTableExcelConfigData;
 import emu.grasscutter.data.server.GadgetMapping;
+import emu.grasscutter.data.server.GadgetVisionType;
 import emu.grasscutter.data.server.MonsterMapping;
+import emu.grasscutter.data.server.MonsterVisionType;
 import emu.grasscutter.data.server.SubfieldMapping;
 import emu.grasscutter.data.server.WeatherMapping;
 import emu.grasscutter.game.dungeons.DungeonDropEntry;
@@ -177,6 +179,8 @@ public class GameData {
     @Getter private static final Int2ObjectMap<Map<String, DummyPoint>> dummyPointMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<RefreshPolicyExcelConfigData> refreshPolicyExcelConfigDataMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<GalleryData> galleryDataMap = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<FleurFairMiniGameData> fleurFairMiniGameDataMap = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<DraftData> draftDataMap = new Int2ObjectOpenHashMap<>();
     // The following are accessed via getMapByResourceDef, and will show as unused
     private static final Int2ObjectMap<CodexMaterialData> codexMaterialDataMap = new Int2ObjectOpenHashMap<>();
     private static final Int2ObjectMap<CodexQuestData> codexQuestDataMap = new Int2ObjectOpenHashMap<>();
@@ -196,6 +200,8 @@ public class GameData {
     @Getter private static final Int2ObjectMap<ActivityCondGroup> activityCondGroupMap = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<SceneGroupReplacement> groupReplacements = new Int2ObjectOpenHashMap<>();
     @Getter private static final Int2ObjectMap<WeatherMapping> weatherMappingMap = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<GadgetVisionType> gadgetVisionTypeMap = new Int2ObjectOpenHashMap<>();
+    @Getter private static final Int2ObjectMap<MonsterVisionType> monsterVisionTypeMap = new Int2ObjectOpenHashMap<>();
 
     // Cache
     @Getter private static final IntList scenePointIdList = new IntArrayList();

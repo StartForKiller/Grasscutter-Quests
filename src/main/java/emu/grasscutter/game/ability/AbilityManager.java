@@ -147,7 +147,9 @@ public final class AbilityManager extends BasePlayerManager {
             case ABILITY_INVOKE_ARGUMENT_META_MODIFIER_DURABILITY_CHANGE -> this.handleModifierDurabilityChange(invoke);
             case ABILITY_INVOKE_ARGUMENT_META_ADD_NEW_ABILITY -> this.handleAddNewAbility(invoke);
             case ABILITY_INVOKE_ARGUMENT_META_TRIGGER_ELEMENT_REACTION -> this.handleTriggerElementReaction(invoke);
-            default -> {}
+            default -> {
+                logger.warn("Invoke type {} not handled", invoke.getArgumentType());
+            }
         }
     }
 
@@ -372,7 +374,7 @@ public final class AbilityManager extends BasePlayerManager {
             var modifierArray = instancedAbilityData.modifiers.values().toArray();
             if(modChange.getModifierLocalId() >= modifierArray.length)
             {
-                logger.info("Modifier local id {} not found", modChange.getModifierLocalId());
+                logger.info("Modifier local id {} not found, entityId {}, name {}", modChange.getModifierLocalId(), invoke.getEntityId(), instancedAbilityData.abilityName);
                 return;
             }
             var modifierData = (AbilityModifier)modifierArray[modChange.getModifierLocalId()];
@@ -463,7 +465,7 @@ public final class AbilityManager extends BasePlayerManager {
 
         entity.getInstancedAbilities().add(new Ability(ability, entity, player));
 
-        logger.debug("Ability added to entity {} at index {}", entity.getId(), entity.getInstancedAbilities().size());
+        logger.debug("Ability added to entity {} at index {} ({})", entity.getId(), entity.getInstancedAbilities().size(), abilityName);
     }
 
     /**
@@ -487,11 +489,25 @@ public final class AbilityManager extends BasePlayerManager {
         AbilityData data = GameData.getAbilityData(name);
         if(data != null)
             addAbilityToEntity(entity, data);
+        else
+            Grasscutter.getLogger().error("Ability {} not found on resources", name);
     }
 
     public void addAbilityToEntity(GameEntity entity, AbilityData abilityData) {
         Ability ability = new Ability(abilityData, entity, this.player);
         entity.getInstancedAbilities().add(ability); //This are in order
+    }
+
+    public void removeAbilityFromEntity(GameEntity entity, String name) {
+        AbilityData data = GameData.getAbilityData(name);
+        if(data != null)
+            removeAbilityFromEntity(entity, data);
+        else
+            Grasscutter.getLogger().error("Ability {} not found on resources", name);
+    }
+
+    public void removeAbilityFromEntity(GameEntity entity, AbilityData abilityData) {
+        entity.getInstancedAbilities().removeIf(a -> a.getData().abilityName.equals(abilityData.abilityName));
     }
 }
 

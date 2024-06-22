@@ -177,9 +177,11 @@ public class Player {
     @Getter private transient PlayerBuffManager buffManager;
     @Getter private transient PlayerProgressManager progressManager;
     @Getter private transient DungeonEntryManager dungeonEntryManager;
+    @Getter private transient PlayerDraftManager playerDraftManager;
 
     @Getter private transient int lastWeatherAreaId = 0;
     @Getter @Setter private transient int weatherAreaId = 0;
+    @Getter @Setter private transient int currentGallery = 0;
 
     @Getter @Setter private transient Position lastCheckedPosition = null;
     private transient PlayerDungeonExitInfo dungeonExitInfo;
@@ -226,6 +228,9 @@ public class Player {
     @Getter private Set<Integer> activeQuestTimers;
 
     @Getter @Setter private Map<Integer, CityInfoData> cityInfoData; // cityId -> CityData
+
+    @Getter @Setter private transient Set<Integer> lastVisionLevels = new HashSet<>();
+    @Getter @Setter private transient Set<Integer> visionLevels = new HashSet<>();
 
     @Deprecated
     @SuppressWarnings({"rawtypes", "unchecked"}) // Morphia only!
@@ -301,6 +306,10 @@ public class Player {
         this.cookingCompoundManager=new CookingCompoundManager(this);
         this.blossomManager = new BlossomManager(this);
         this.dungeonEntryManager = new DungeonEntryManager(this);
+        this.playerDraftManager = new PlayerDraftManager(this);
+
+        this.lastVisionLevels.add(1);
+        this.visionLevels.add(1);
     }
 
     // On player creation
@@ -338,6 +347,10 @@ public class Player {
         this.cookingCompoundManager=new CookingCompoundManager(this);
         this.blossomManager = new BlossomManager(this);
         this.dungeonEntryManager = new DungeonEntryManager(this);
+        this.playerDraftManager = new PlayerDraftManager(this);
+
+        this.lastVisionLevels.add(1);
+        this.visionLevels.add(1);
     }
 
     public PlayerDungeonExitInfo getDungeonExitInfo() {

@@ -20,7 +20,9 @@ import emu.grasscutter.data.server.ActivityCondGroup;
 import emu.grasscutter.data.server.DropSubfieldMapping;
 import emu.grasscutter.data.server.DropTableExcelConfigData;
 import emu.grasscutter.data.server.GadgetMapping;
+import emu.grasscutter.data.server.GadgetVisionType;
 import emu.grasscutter.data.server.MonsterMapping;
+import emu.grasscutter.data.server.MonsterVisionType;
 import emu.grasscutter.data.server.SubfieldMapping;
 import emu.grasscutter.data.server.WeatherMapping;
 import emu.grasscutter.game.ability.Ability;
@@ -143,6 +145,7 @@ public class ResourceLoader {
         loadConfigLevelEntityData();
         loadScriptData();
         loadGadgetMappings();
+        loadEntityVisionTypes();
         loadSubfieldMappings();
         loadWeatherMappings();
         loadMonsterMappings();
@@ -832,6 +835,28 @@ public class ResourceLoader {
             logger.debug("Loaded {} gadget mappings.", gadgetMap.size());
         } catch (Exception e) {
             logger.error("Unable to load gadget mappings.", e);
+        }
+    }
+
+    private static void loadEntityVisionTypes() {
+        try {
+            val gadgetVisionTypeMap = GameData.getGadgetVisionTypeMap();
+            try {
+                JsonUtils.loadToList(getResourcePath("Server/GadgetVisionType.json"), GadgetVisionType.class).forEach(entry -> gadgetVisionTypeMap.put(entry.getGadgetId(), entry));;
+            } catch (IOException | NullPointerException ignored) {}
+            logger.debug("Loaded {} gadget vision types.", gadgetVisionTypeMap.size());
+        } catch (Exception e) {
+            logger.error("Unable to load gadget vision types.", e);
+        }
+
+        try {
+            val monsterVisionTypeMap = GameData.getMonsterVisionTypeMap();
+            try {
+                JsonUtils.loadToList(getResourcePath("Server/MonsterVisionType.json"), MonsterVisionType.class).forEach(entry -> monsterVisionTypeMap.put(entry.getMonsterId(), entry));;
+            } catch (IOException | NullPointerException ignored) {}
+            logger.debug("Loaded {} monster vision types.", monsterVisionTypeMap.size());
+        } catch (Exception e) {
+            logger.error("Unable to load monster vision types.", e);
         }
     }
 

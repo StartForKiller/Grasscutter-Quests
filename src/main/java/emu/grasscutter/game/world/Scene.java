@@ -14,6 +14,7 @@ import emu.grasscutter.game.dungeons.challenge.WorldChallenge;
 import emu.grasscutter.game.dungeons.enums.DungeonPassConditionType;
 import emu.grasscutter.game.entity.*;
 import emu.grasscutter.game.entity.gadget.GadgetWorktop;
+import emu.grasscutter.game.gallery.BaseGallery;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.player.TeamInfo;
 import emu.grasscutter.game.props.*;
@@ -87,6 +88,8 @@ public class Scene {
     @Getter private boolean isPaused = false;
     @Getter private final Map<Integer, WeatherArea> weatherAreas = new ConcurrentHashMap<>();
     private boolean weatherLoaded = false;
+
+    @Getter private final Map<Integer, BaseGallery> galleries = new ConcurrentHashMap<>();
 
     @Getter private final GameEntity sceneEntity;
 
@@ -264,13 +267,16 @@ public class Scene {
 
     public synchronized void addEntity(GameEntity entity) {
         addEntityDirectly(entity);
-        broadcastPacket(new PacketSceneEntityAppearNotify(entity));
+        for(Player p : getPlayers()) {
+            if(p.getVisionLevels().contains(entity.getVisionType()))
+                p.sendPacket(new PacketSceneEntityAppearNotify(entity));
+        }
     }
 
     public synchronized void addEntityToSingleClient(Player player, GameEntity entity) {
         addEntityDirectly(entity);
-        player.sendPacket(new PacketSceneEntityAppearNotify(entity));
-
+        if(player.getVisionLevels().contains(entity.getVisionType()))
+            player.sendPacket(new PacketSceneEntityAppearNotify(entity));
     }
 
     public void addEntities(Collection<? extends GameEntity> entities) {
@@ -278,11 +284,19 @@ public class Scene {
     }
 
     public void updateEntity(GameEntity entity) {
-        this.broadcastPacket(new PacketSceneEntityUpdateNotify(entity));
+        for(Player p : getPlayers()) {
+            if(p.getVisionLevels().contains(entity.getVisionType()))
+                p.sendPacket(new PacketSceneEntityUpdateNotify(entity));
+        }
+        //this.broadcastPacket(new PacketSceneEntityUpdateNotify(entity));
     }
 
     public void updateEntity(GameEntity entity, VisionType type) {
-        this.broadcastPacket(new PacketSceneEntityUpdateNotify(List.of(entity), type));
+        for(Player p : getPlayers()) {
+            if(p.getVisionLevels().contains(entity.getVisionType()))
+                p.sendPacket(new PacketSceneEntityUpdateNotify(List.of(entity), type));
+        }
+        //this.broadcastPacket(new PacketSceneEntityUpdateNotify(List.of(entity), type));
     }
 
     private static <T> List<List<T>> chopped(List<T> list, final int L) {
@@ -296,7 +310,21 @@ public class Scene {
 
         entities.forEach(this::addEntityDirectly);
 
-        chopped(entities.stream().toList(), 100).forEach(l -> broadcastPacket(new PacketSceneEntityAppearNotify(l, visionType)));
+        chopped(entities.stream().toList(), 100).forEach(l -> {
+            for(Player p : getPlayers()) {
+                p.sendPacket(new PacketSceneEntityAppearNotify(entities.stream().filter(e -> !(e instanceof EntityGadget || e instanceof EntityMonster) || p.getVisionLevels().contains(e.getVisionType())).toList(), visionType));
+            }
+        });
+    }
+
+    public synchronized void refreshEntityVision(Player player) {
+        val toMiss = getEntities().values().stream().filter(e -> player.getLastVisionLevels().contains(e.getVisionType()) && !player.getVisionLevels().contains(e.getVisionType())).toList();
+        val toMeet = getEntities().values().stream().filter(e -> !player.getLastVisionLevels().contains(e.getVisionType()) && player.getVisionLevels().contains(e.getVisionType())).toList();
+
+        player.setLastVisionLevels(player.getVisionLevels());
+
+        if(!toMiss.isEmpty()) player.sendPacket(new PacketSceneEntityDisappearNotify(toMiss, VisionTypeOuterClass.VisionType.VISION_TYPE_MISS));
+        if(!toMeet.isEmpty()) player.sendPacket(new PacketSceneEntityAppearNotify(toMeet, VisionType.VISION_MEET));
     }
 
     private GameEntity removeEntityDirectly(GameEntity entity) {
@@ -751,7 +779,7 @@ public class Scene {
 
     public void loadTriggerFromGroup(SceneGroup group, String triggerName) {
         //Load triggers and regions
-        this.scriptManager.registerTrigger(group.getTriggers().values().stream().filter(p -> p.getName().contains(triggerName)).toList());
+        this.scriptManager.registerTrigger(group.getTriggers().values().stream().filter(p -> p.getName().contains(triggerName)).toList(), group.getGroupInfo().getId());
         group.getRegions().values().stream().filter(q -> q.getConfigId() == Integer.parseInt(triggerName.substring(13)))
             .map(region -> new EntityRegion(this, region)).forEach(this.scriptManager::registerRegion);
     }
@@ -801,11 +829,11 @@ public class Scene {
         removeEntities(this.entities.values().stream().filter(Objects::nonNull).filter(e ->
             e.getBlockId() == block.getId() && e.getGroupId() == groupId).toList(), VisionTypeOuterClass.VisionType.VISION_TYPE_REMOVE);
 
-
         SceneGroup group = scriptManager.getMeta().getGroups().get(groupId);
         val triggers = group.getTriggers();
         if (triggers != null) {
-            triggers.values().forEach(getScriptManager()::deregisterTrigger);
+            var scriptManager = getScriptManager();
+            triggers.values().forEach(t -> scriptManager.deregisterTrigger(t, groupId));
         }
         val regions = group.getRegions();
         if (regions != null) {
@@ -823,6 +851,7 @@ public class Scene {
 
         broadcastPacket(new PacketGroupUnloadNotify(List.of(groupId)));
         this.scriptManager.unregisterGroup(group);
+        this.scriptManager.deleteGroupTempVariables(groupId);
     }
 
     // Gadgets

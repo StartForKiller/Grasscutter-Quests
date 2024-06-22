@@ -89,6 +89,8 @@ public class EntityGadget extends EntityBaseGadget implements ConfigAbilityDataA
         if (gadgetData!=null && gadgetData.getJsonName()!=null) {
             this.configGadget = GameData.getGadgetConfigData().get(gadgetData.getJsonName());
         }
+        val visionType = GameData.getGadgetVisionTypeMap().get(gadgetId);
+        this.setVisionType(visionType == null ? 1 : visionType.getVisionType());
         this.id = this.getScene().getWorld().getNextEntityId(EntityIdType.GADGET);
         this.gadgetId = gadgetId;
         this.content = content;

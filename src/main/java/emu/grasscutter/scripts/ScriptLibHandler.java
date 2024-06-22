@@ -1079,12 +1079,24 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
 
     @Override
     public int SetGroupTempValue(GroupEventLuaContext context, String name, int value, LuaTable var3Table) {
-        return handleUnimplemented(name, value, printTable(var3Table));
+        int groupId = var3Table.getSize() == 0 ? context.getCurrentGroup().getGroupInfo().getId() : var3Table.getAsIntArray()[0];
+        val variables = context.getSceneScriptManager().getGroupTempVariables(groupId);
+        if(variables == null) return 1;
+
+        variables.put(name, value);
+
+        return 0;
     }
 
     @Override
     public int GetGroupTempValue(GroupEventLuaContext context, String name, LuaTable var2) {
-        return handleUnimplemented(name, printTable(var2));
+        int groupId = var2.getSize() == 0 ? context.getCurrentGroup().getGroupInfo().getId() : var2.getAsIntArray()[0];
+        val variables = context.getSceneScriptManager().getGroupTempVariables(groupId);
+        if(variables == null) return -1;
+
+        Integer value = variables.get(name);
+
+        return value == null ? -1 : (int)value;
     }
 
     @Override
@@ -1105,15 +1117,18 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
     }
 
     @Override
-    public int InitTimeAxis(GroupEventLuaContext context, String var1, LuaTable var2, boolean var3) {
-        return handleUnimplemented(var1, printTable(var2), var3);
-        //TODO implement var1 == name? var2 == delay? var3 == should loop?
+    public int InitTimeAxis(GroupEventLuaContext context, String name, LuaTable timerList, boolean isLoop) {
+        return context.getSceneScriptManager().createGroupTimeAxis(
+            context.getCurrentGroup().getGroupInfo().getId(),
+            name,
+            Arrays.stream(timerList.getAsIntArray()).boxed().toList(),
+            isLoop
+        );
     }
 
     @Override
-    public int EndTimeAxis(GroupEventLuaContext context, String var1) {
-        return handleUnimplemented(var1);
-        //TODO implement var1 == name?
+    public int EndTimeAxis(GroupEventLuaContext context, String name) {
+        return context.getSceneScriptManager().cancelGroupTimeAxis(context.getCurrentGroup().getGroupInfo().getId(), name);
     }
 
     @Override
@@ -1186,8 +1201,10 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
 
     @Override
     public int UpdatePlayerGalleryScore(GroupEventLuaContext context, int galleryId, LuaTable var2) {
-        return handleUnimplemented(galleryId, printTable(var2));
-        //TODO implement var2 contains int uid
+        val gallery = context.getSceneScriptManager().getScene().getGalleries().get(galleryId);
+        if(gallery == null) return -1;
+
+        return gallery.updatePlayerScore(context, var2) ? 0 : 1;
     }
 
     @Override
@@ -1244,7 +1261,19 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
 
     @Override
     public int SetPlayerGroupVisionType(GroupEventLuaContext context, int[] uids, int[] visionTypeList) {
-        return handleUnimplemented(uids, visionTypeList);
+        for(int id : uids) {
+            val player = Grasscutter.getGameServer().getPlayerByUid(id);
+            if(player != null) {
+                Grasscutter.getLogger().info("Adding visions to player uid {}", id);
+                player.getVisionLevels().clear();
+                for(int level : visionTypeList) player.getVisionLevels().add(level);
+                player.getScene().refreshEntityVision(player);
+            } else {
+                return 1;
+            }
+        }
+
+        return 0;
     }
 
     @Override
@@ -1711,6 +1740,7 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
         val result = new ActivityOpenAndCloseTime();
         result.setOpenTime(activityConfig.getBeginTime());
         result.setCloseTime(activityConfig.getEndTime());
+        Grasscutter.getLogger().error("{} {}", result.getOpenTime().getTime(), result.getCloseTime().getTime());
         return result;
     }
 
@@ -1728,6 +1758,8 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
     public int ActivateGroupLinkBundleByBundleId(GroupEventLuaContext context, int bundleId) {
         return handleUnimplemented(bundleId);
     }
+
+
 
 
     /**
@@ -1894,7 +1926,5 @@ public class ScriptLibHandler extends BaseHandler implements org.anime_game_serv
     public int updateBundleMarkShowStateByGroupId(GroupEventLuaContext groupEventLuaContext, int groupId, boolean val2) {
         return handleUnimplemented(groupId, val2);
     }
-
-
 
 }

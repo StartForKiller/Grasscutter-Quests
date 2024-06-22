@@ -1,6 +1,7 @@
 package emu.grasscutter.utils;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -412,5 +413,29 @@ public final class Utils {
         if (start < input.length())
             output.add(input.substring(start));
         return output;
+    }
+
+    public static Map<Integer, Integer> parseIntIntMapString(String str) {
+        List<String> list = nonRegexSplit(str, (int)',');
+
+        Map<Integer, Integer> map = new HashMap<>();
+        for (String value : list) {
+            List<String> entry = nonRegexSplit(value, (int)':');
+            map.put(Integer.parseInt(entry.get(0)), Integer.parseInt(entry.get(1)));
+        }
+
+        return map;
+    }
+
+    public static Map<Integer, Double> parseIntDoubleMapString(String str) {
+        List<String> list = nonRegexSplit(str, (int)',');
+
+        Map<Integer, Double> map = new HashMap<>();
+        for (String value : list) {
+            List<String> entry = nonRegexSplit(value, (int)':');
+            map.put(Integer.parseInt(entry.get(0)), Double.parseDouble(entry.get(1)));
+        }
+
+        return map;
     }
 }

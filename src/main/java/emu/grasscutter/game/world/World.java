@@ -248,6 +248,7 @@ public class World implements Iterable<Player> {
             case SCRIPT -> EnterReason.Lua;
             case CLIENT -> EnterReason.ClientTransmit;
             case DUNGEON -> EnterReason.DungeonEnter;
+            case DRAFT -> EnterReason.DraftTransfer;
             default -> EnterReason.None;
         };
         return transferPlayerToScene(player, sceneId, teleportType, enterReason, dungeonData, teleportTo, newRot);

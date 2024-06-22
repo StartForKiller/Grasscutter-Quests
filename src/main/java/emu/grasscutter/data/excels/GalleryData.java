@@ -23,12 +23,12 @@ public class GalleryData extends GameResource {
     private String limitRegion;
     private List<Float> centerPosList;
     private int duration;
-    private int nameTextMapHash;
-    private int descTextMapHash;
-    private int galleryNameTextMapHash;
-    private int galleryMSGTextMapHash;
+    private Long nameTextMapHash;
+    private Long descTextMapHash;
+    private Long galleryNameTextMapHash;
+    private Long galleryMSGTextMapHash;
     private String pic;
-    private int targetTextMapHash;
+    private Long targetTextMapHash;
     private String startAudioValues;
     private String endAudioValues;
     private List<String> selectableAbilityGroups;

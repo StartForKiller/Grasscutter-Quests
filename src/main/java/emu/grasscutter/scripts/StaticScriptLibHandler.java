@@ -24,10 +24,10 @@ public class StaticScriptLibHandler implements ScriptLibStaticHandler {
     public void PrintContextLog(LuaContext luaContext, String msg) {
         if(luaContext instanceof emu.grasscutter.scripts.lua_engine.GroupEventLuaContext){
             var group = ((emu.grasscutter.scripts.lua_engine.GroupEventLuaContext) luaContext).getCurrentGroup();
-            logger.debug("[LUA] PrintContextLog {} {}", group.getGroupInfo().getId(), msg);
+            logger.info("[LUA] PrintContextLog {} {}", group.getGroupInfo().getId(), msg);
             return;
         } else {
-            logger.debug("[LUA] PrintContextLog {}", msg);
+            logger.info("[LUA] PrintContextLog {}", msg);
         }
     }
 }

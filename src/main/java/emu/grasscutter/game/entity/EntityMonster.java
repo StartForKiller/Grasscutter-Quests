@@ -70,6 +70,9 @@ public class EntityMonster extends GameEntity implements StringAbilityEntity {
         this.level = level;
         this.playerOnBattle = new ArrayList<>();
 
+        val visionType = GameData.getMonsterVisionTypeMap().get(getMonsterId());
+        this.setVisionType(visionType == null ? 1 : visionType.getVisionType());
+
         if(GameData.getMonsterMappingMap().containsKey(getMonsterId())) {
             this.configEntityMonster = GameData.getMonsterConfigData().get(GameData.getMonsterMappingMap().get(getMonsterId()).getMonsterJson());
         } else {

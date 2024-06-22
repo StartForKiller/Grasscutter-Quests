@@ -18,6 +18,7 @@ import emu.grasscutter.game.quest.enums.QuestContent;
 import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.game.world.SceneGroupInstance;
 import emu.grasscutter.net.proto.VisionTypeOuterClass;
+import emu.grasscutter.scripts.data.TimeAxis;
 import emu.grasscutter.scripts.lua_engine.GroupEventLuaContext;
 import emu.grasscutter.scripts.lua_engine.service.ScriptMonsterSpawnService;
 import emu.grasscutter.scripts.lua_engine.service.ScriptMonsterTideService;
@@ -62,15 +63,16 @@ import static org.anime_game_servers.gi_lua.models.scene.group.SceneTrigger.INF_
 public class SceneScriptManager {
     private static final Logger logger = Loggers.getScriptSystem();
     private final Scene scene;
-    private final Map<String, Integer> variables;
+    private final Map<Integer, Map<String, Integer>> tempVariables;
     @Getter private SceneMeta meta;
     private boolean isInit;
     /**
      * current triggers controlled by RefreshGroup
      */
-    private final Map<Integer, Set<SceneTrigger>> currentTriggers;
+    private final Map<Integer, Set<Pair<String, SceneTrigger>>> currentTriggers;
     private final Map<String, Set<SceneTrigger>> triggersByGroupScene;
     private final Map<Integer, Set<Pair<String, Integer>>> activeGroupTimers;
+    private final Map<Integer, Set<Pair<String, TimeAxis>>> activeGroupTimeAxis;
     private final Map<String, AtomicInteger> triggerInvocations;
     private final Map<Integer, EntityRegion> regions; // <EntityId-Region>
     private final Map<Integer, SceneGroup> sceneGroups;
@@ -94,10 +96,11 @@ public class SceneScriptManager {
         this.currentTriggers = new ConcurrentHashMap<>();
         this.triggersByGroupScene = new ConcurrentHashMap<>();
         this.activeGroupTimers = new ConcurrentHashMap<>();
+        this.activeGroupTimeAxis = new ConcurrentHashMap<>();
         this.triggerInvocations = new ConcurrentHashMap<>();
 
         this.regions = new ConcurrentHashMap<>();
-        this.variables = new ConcurrentHashMap<>();
+        this.tempVariables = new ConcurrentHashMap<>();
         this.sceneGroups = new ConcurrentHashMap<>();
         this.sceneGroupsInstances = new ConcurrentHashMap<>();
         this.cachedSceneGroupsInstances = new ConcurrentHashMap<>();
@@ -128,33 +131,46 @@ public class SceneScriptManager {
         return meta.getBlocks();
     }
 
+    public Map<String, Integer> getGroupTempVariables(int group_id) {
+        if(!tempVariables.containsKey(group_id))
+            tempVariables.put(group_id, new ConcurrentHashMap<>());
+
+        return tempVariables.get(group_id);
+    }
+    public void deleteGroupTempVariables(int group_id) {
+        tempVariables.remove(group_id);
+    }
+
     @Nullable
     public Map<String, Integer> getVariables(int group_id) {
         if(getCachedGroupInstanceById(group_id) == null) return Collections.emptyMap();
         return getCachedGroupInstanceById(group_id).getCachedVariables();
     }
 
-    public Set<SceneTrigger> getTriggersByEvent(int eventId) {
+    public Set<Pair<String, SceneTrigger>> getTriggersByEvent(int eventId) {
         return currentTriggers.computeIfAbsent(eventId, e -> ConcurrentHashMap.newKeySet());
     }
     public int getTriggerCount() {
+        //TODO
         return currentTriggers.size();
     }
-    public void registerTrigger(List<SceneTrigger> triggers) {
-        triggers.forEach(this::registerTrigger);
+    public void registerTrigger(List<SceneTrigger> triggers, int groupId) {
+        triggers.forEach(t -> registerTrigger(t, groupId));
     }
-    public void registerTrigger(SceneTrigger trigger) {
-        triggerInvocations.put(trigger.getName(), new AtomicInteger(0));
-        getTriggersByEvent(trigger.getEvent()).add(trigger);
-        logger.debug("Registered trigger {}", trigger.getName());
+    public void registerTrigger(SceneTrigger trigger, int groupId) {
+        triggerInvocations.put(groupId + "_" + trigger.getName(), new AtomicInteger(0));
+        getTriggersByEvent(trigger.getEvent()).add(new Pair<>(groupId + "_" + trigger.getName(), trigger));
+        logger.error("Registered trigger {}", groupId + "_" + trigger.getName());
     }
 
-    public void deregisterTrigger(List<SceneTrigger> triggers) {
-        triggers.forEach(this::deregisterTrigger);
+    public void deregisterTrigger(List<SceneTrigger> triggers, int groupId) {
+        triggers.forEach(t -> deregisterTrigger(t, groupId));
     }
-    public void deregisterTrigger(SceneTrigger trigger) {
-        getTriggersByEvent(trigger.getEvent()).remove(trigger);
-        logger.debug("deregistered trigger {}", trigger.getName());
+    public void deregisterTrigger(SceneTrigger trigger, int groupId) {
+        logger.error("Scene contains");
+        getTriggersByEvent(trigger.getEvent()).removeIf(p -> p.component1().equals(groupId + "_" + trigger.getName()));
+        //getTriggersByEvent(trigger.getEvent()).remove(trigger);
+        logger.error("deregistered trigger {}", groupId + "_" + trigger.getName());
     }
 
     public void resetTriggers(int eventId) {
@@ -186,7 +202,7 @@ public class SceneScriptManager {
         if (!suite.getSceneTriggers().isEmpty()) {
             groupSceneTriggers.addAll(suite.getSceneTriggers());
             for (var trigger : groupSceneTriggers) {
-                registerTrigger(trigger);
+                registerTrigger(trigger, groupInstance.getGroupId());
                 /*this.currentTriggers.computeIfAbsent(trigger.event, k -> ConcurrentHashMap.newKeySet())
                     .add(trigger);*/
             }
@@ -631,7 +647,7 @@ public class SceneScriptManager {
     }
     public void addGroupSuite(SceneGroupInstance groupInstance, SceneSuite suite, List<GameEntity> entities) {
         // we added trigger first
-        registerTrigger(suite.getSceneTriggers());
+        registerTrigger(suite.getSceneTriggers(), groupInstance.getGroupId());
 
         var group = groupInstance.getLuaGroup();
         var toCreate = new ArrayList<GameEntity>();
@@ -646,7 +662,7 @@ public class SceneScriptManager {
     }
     public void refreshGroupSuite(SceneGroupInstance groupInstance, SceneSuite suite) {
         // we added trigger first
-        registerTrigger(suite.getSceneTriggers());
+        registerTrigger(suite.getSceneTriggers(), groupInstance.getGroupId());
 
         var group = groupInstance.getLuaGroup();
         var toCreate = new ArrayList<GameEntity>();
@@ -657,14 +673,14 @@ public class SceneScriptManager {
         registerRegionInGroupSuite(group, suite);
     }
     public void removeGroupSuite(SceneGroup group, SceneSuite suite) {
-        deregisterTrigger(suite.getSceneTriggers());
+        deregisterTrigger(suite.getSceneTriggers(), group.getGroupInfo().getId());
         removeMonstersInGroup(group, suite);
         removeGadgetsInGroup(group, suite);
 
         suite.getSceneRegions().forEach(this::deregisterRegion);
     }
     public void killGroupSuite(SceneGroup group, SceneSuite suite) {
-        deregisterTrigger(suite.getSceneTriggers());
+        deregisterTrigger(suite.getSceneTriggers(), group.getGroupInfo().getId());
 
         killMonstersInGroup(group, suite);
         killGadgetsInGroup(group, suite);
@@ -726,6 +742,7 @@ public class SceneScriptManager {
         try {
             int eventType = params.type;
             Set<SceneTrigger> relevantTriggers = this.getTriggersByEvent(eventType).stream()
+                .map(p -> p.component2())
                 .filter(t -> params.getGroupId() == 0 || t.getGroupId() == params.getGroupId())
                 .filter(t ->  (t.getSource().isEmpty() || t.getSource().equals(params.getEventSource())))
                 .collect(Collectors.toSet());
@@ -782,7 +799,7 @@ public class SceneScriptManager {
             callResult = this.callScriptFunc(trigger.getAction(), group, params);
         }
 
-        val invocationsCounter = triggerInvocations.get(trigger.getName());
+        val invocationsCounter = triggerInvocations.get(group.getGroupInfo().getId() + "_" + trigger.getName());
         val invocations = invocationsCounter.incrementAndGet();
         logger.trace("Call Action Trigger {}", trigger.getAction());
 
@@ -806,7 +823,7 @@ public class SceneScriptManager {
         // always deregister on error, otherwise only if the count is reached
         if(callResult.isBoolean() && !callResult.asBoolean() || callResult.isInteger() && callResult.asInteger()!=0
         || trigger.getTrigger_count() > INF_TRIGGERS && invocations >= trigger.getTrigger_count()) {
-            deregisterTrigger(trigger);
+            deregisterTrigger(trigger, group.getGroupInfo().getId());
         }
     }
 
@@ -833,6 +850,15 @@ public class SceneScriptManager {
             logger.error("[LUA] call trigger failed in group {} with {},{}",group.getGroupInfo().getId(),funcName,params,error);
             return new BooleanLuaValue(false);
         }
+    }
+
+    public LuaValue callScriptFunc(@Nonnull String funcName, int groupId, ScriptArgs params) {
+        val group = getMeta().getGroup(groupId);
+        if(group == null) {
+            return BooleanLuaValue.FALSE;
+        }
+
+        return callScriptFunc(funcName, group, params);
     }
 
     public ScriptMonsterTideService getScriptMonsterTideService() {
@@ -1026,6 +1052,42 @@ public class SceneScriptManager {
         return 1;
     }
 
+    public int cancelGroupTimeAxis(int groupID, String name) {
+        var groupTimeAxis = activeGroupTimeAxis.get(groupID);
+        if(groupTimeAxis!=null && !groupTimeAxis.isEmpty()) {
+            for (var axis : new HashSet<>(groupTimeAxis)) {
+                if(axis.component1().equals(name)) {
+                    axis.component2().cancel();
+                    groupTimeAxis.remove(axis);
+                    return 0;
+                }
+            }
+        }
+
+        logger.warn("trying to cancel a time axis that's not active {} {}", groupID, name);
+        return 1;
+    }
+
+    public int createGroupTimeAxis(int groupID, String name, List<Integer> timerValue, boolean isLoop) {
+        var group = getGroupById(groupID);
+        if(group == null || group.getTriggers() == null){
+            logger.warn("trying to create a timer for unknown group with id {} and name {}", groupID, name);
+            return 1;
+        }
+
+        logger.info("creating group time axis for group {} with name {} and time {}",
+            groupID, name, timerValue.stream().map(String::valueOf).collect(Collectors.joining(",")));
+        cancelGroupTimeAxis(groupID, name);
+
+        var timeAxis = new TimeAxis(name, timerValue, isLoop);
+        if(!timeAxis.start(this, groupID))
+            return 1;
+        var groupTimeAxis = activeGroupTimeAxis.computeIfAbsent(groupID, k -> new HashSet<>());
+        groupTimeAxis.add(new Pair<>(name, timeAxis));
+
+        return 0;
+    }
+
     // todo use killed monsters instead of spawned entites for check?
     public boolean isClearedGroupMonsters(int groupId) {
         val groupInstance = getGroupInstanceById(groupId);
@@ -1044,5 +1106,7 @@ public class SceneScriptManager {
     public void onDestroy(){
         activeGroupTimers.forEach((gid,times) -> times.forEach((e)->Grasscutter.getGameServer().getScheduler().cancelTask(e.getSecond())));
         activeGroupTimers.clear();
+        activeGroupTimeAxis.forEach((gid, axis) -> axis.forEach((e) -> e.getSecond().cancel()));
+        activeGroupTimeAxis.clear();
     }
 }

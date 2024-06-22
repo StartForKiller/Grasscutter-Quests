@@ -14,6 +14,8 @@ import emu.grasscutter.server.packet.send.PacketActivityScheduleInfoNotify;
 import lombok.Getter;
 import lombok.val;
 import messages.activity.ActivityInfo;
+import messages.gallery.BalloonSettleInfo;
+
 import org.reflections.Reflections;
 
 import java.util.*;
@@ -219,6 +221,14 @@ public class ActivityManager extends BasePlayerManager {
             val activityConfig = activityConfigItemMap.get(activityId);
             val activityHandler = activityConfig.getActivityHandler();
             activityHandler.onLoadScene(scene, player, activityConfig);
+        });
+    }
+
+    public void onBalloonSettleNotify(int galleryId, List<BalloonSettleInfo> info) {
+        getActiveActivityIds().forEach(activityId -> {
+            val activityConfig = activityConfigItemMap.get(activityId);
+            val activityHandler = activityConfig.getActivityHandler();
+            activityHandler.onBalloonSettleNotify(galleryId, info, activityConfig);
         });
     }
 

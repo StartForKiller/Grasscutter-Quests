@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
 import messages.activity.ActivityInfo;
+import messages.gallery.BalloonSettleInfo;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -36,6 +37,7 @@ public abstract class ActivityHandler {
     public abstract void onProtoBuild(PlayerActivityData playerActivityData, ActivityInfo activityInfo);
     public abstract void onInitPlayerActivityData(PlayerActivityData playerActivityData);
     public abstract void onLoadScene(Scene scene, Player player, ActivityConfigItem activityInfo);
+    public void onBalloonSettleNotify(int galleryId, List<BalloonSettleInfo> info, ActivityConfigItem activityInfo) {};
 
     public void initWatchers(Map<WatcherTriggerType, ConstructorAccess<?>> activityWatcherTypeMap){
         activityData = GameData.getActivityDataMap().get(activityConfigItem.getActivityId());
