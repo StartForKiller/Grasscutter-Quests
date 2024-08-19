@@ -9,7 +9,6 @@ import emu.grasscutter.Grasscutter.ServerDebugMode;
 import emu.grasscutter.game.Account;
 import emu.grasscutter.game.player.Player;
 import emu.grasscutter.net.packet.BasePacket;
-import emu.grasscutter.net.packet.PacketOpcodes;
 import emu.grasscutter.net.packet.PacketOpcodesUtils;
 import emu.grasscutter.server.event.game.SendPacketEvent;
 import emu.grasscutter.utils.Crypto;
@@ -20,6 +19,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.val;
 import org.anime_game_servers.core.base.Version;
 import packet_id.PacketIds;
 
@@ -124,19 +124,20 @@ public class GameSession implements GameSessionManager.KcpChannel {
         }
 
         // Log
+        val paketName = PacketOpcodesUtils.getOpcodeName(packet.getOpcode(this), this);
         switch (GAME_INFO.logPackets) {
             case ALL -> {
-                if (!PacketOpcodesUtils.LOOP_PACKETS.contains(packet.getOpcode(this)) || GAME_INFO.isShowLoopPackets) {
+                if (!PacketOpcodesUtils.LOOP_PACKETS.contains(paketName) || GAME_INFO.isShowLoopPackets) {
                     logPacket("SEND", packet.getOpcode(this), packet.getData(version));
                 }
             }
             case WHITELIST -> {
-                if (SERVER.debugWhitelist.contains(packet.getOpcode(this))) {
+                if (SERVER.debugWhitelist.contains(paketName)) {
                     logPacket("SEND", packet.getOpcode(this), packet.getData(version));
                 }
             }
             case BLACKLIST -> {
-                if (!SERVER.debugBlacklist.contains(packet.getOpcode(this))) {
+                if (!SERVER.debugBlacklist.contains(paketName)) {
                     logPacket("SEND", packet.getOpcode(this), packet.getData(version));
                 }
             }
@@ -244,7 +245,7 @@ public class GameSession implements GameSessionManager.KcpChannel {
             player.onLogout();
         }
         try {
-            send(new BasePacket(PacketOpcodes.ServerDisconnectClientNotify));
+            send(new BasePacket(getPackageIdProvider().getPacketId("ServerDisconnectClientNotify")));
         } catch (Throwable ignore) {
             Grasscutter.getLogger().warn("closing {} error", getAddress().getAddress().getHostAddress());
         }
