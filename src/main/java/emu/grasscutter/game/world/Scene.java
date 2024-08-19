@@ -326,6 +326,16 @@ public class Scene {
         });
     }
 
+    public synchronized void refreshEntityVision(Player player) {
+        val toMiss = getEntities().values().stream().filter(e -> player.getLastVisionLevels().contains(e.getVisionType()) && !player.getVisionLevels().contains(e.getVisionType())).toList();
+        val toMeet = getEntities().values().stream().filter(e -> !player.getLastVisionLevels().contains(e.getVisionType()) && player.getVisionLevels().contains(e.getVisionType())).toList();
+
+        player.setLastVisionLevels(player.getVisionLevels());
+
+        if(!toMiss.isEmpty()) player.sendPacket(new PacketSceneEntityDisappearNotify(toMiss, VisionType.VISION_MISS));
+        if(!toMeet.isEmpty()) player.sendPacket(new PacketSceneEntityAppearNotify(toMeet, VisionType.VISION_MEET));
+    }
+
     private GameEntity removeEntityDirectly(GameEntity entity) {
         val removed = this.entities.remove(entity.getId());
         Optional.ofNullable(removed).ifPresent(GameEntity::onRemoved); //Call entity remove event

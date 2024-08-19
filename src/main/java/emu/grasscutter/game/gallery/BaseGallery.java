@@ -5,6 +5,8 @@ import org.anime_game_servers.gi_lua.models.constants.EventType;
 import org.anime_game_servers.gi_lua.models.constants.GalleryStopReason;
 import org.anime_game_servers.lua.engine.LuaTable;
 import org.anime_game_servers.lua.engine.LuaValue;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.GalleryStageType;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.SceneGalleryInfo;
 
 import emu.grasscutter.Grasscutter;
 import emu.grasscutter.data.excels.GalleryData;
@@ -18,8 +20,6 @@ import emu.grasscutter.server.packet.send.PacketSceneGalleryInfoNotify;
 import emu.grasscutter.server.packet.send.PacketSyncTeamEntityNotify;
 import lombok.Getter;
 import lombok.val;
-import messages.gallery.GalleryStageType;
-import messages.gallery.SceneGalleryInfo;
 
 import java.util.ArrayList;
 

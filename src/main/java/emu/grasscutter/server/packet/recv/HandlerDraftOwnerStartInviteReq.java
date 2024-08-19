@@ -1,12 +1,13 @@
 package emu.grasscutter.server.packet.recv;
 
+import org.anime_game_servers.multi_proto.gi.messages.gallery.draft.DraftInviteFailInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.draft.DraftInviteFailReason;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.draft.DraftOwnerStartInviteReq;
+
 import emu.grasscutter.Grasscutter;
 import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketDraftOwnerStartInviteRsp;
-import messages.gallery.draft.DraftInviteFailInfo;
-import messages.gallery.draft.DraftInviteFailReason;
-import messages.gallery.draft.DraftOwnerStartInviteReq;
 
 public class HandlerDraftOwnerStartInviteReq extends TypedPacketHandler<DraftOwnerStartInviteReq> {
 

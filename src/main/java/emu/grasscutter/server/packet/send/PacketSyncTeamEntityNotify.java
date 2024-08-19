@@ -6,8 +6,11 @@ import lombok.val;
 import org.anime_game_servers.multi_proto.gi.messages.general.ability.AbilitySyncStateInfo;
 import org.anime_game_servers.multi_proto.gi.messages.team.SyncTeamEntityNotify;
 import org.anime_game_servers.multi_proto.gi.messages.team.TeamEntityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.general.ability.AbilityAppliedAbility;
+import org.anime_game_servers.multi_proto.gi.messages.general.ability.AbilityString;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PacketSyncTeamEntityNotify extends BaseTypedPacket<SyncTeamEntityNotify> {
 
@@ -28,11 +31,15 @@ public class PacketSyncTeamEntityNotify extends BaseTypedPacket<SyncTeamEntityNo
 				for(int i = 0; i < entityAbilities.size(); i++) {
 					//TODO: Override map and more
 					val a = entityAbilities.get(i);
-					abilities.add(AbilityAppliedAbility.newBuilder()
-						.setAbilityName(AbilityString.newBuilder().setStr(a.getData().abilityName).build())
-						.setInstancedAbilityId(i + 1)
-						.build()
-					);
+
+					val abilityString = new AbilityString();
+					abilityString.setType(new AbilityString.Type.Str(a.getData().abilityName));
+
+					val ability = new AbilityAppliedAbility();
+					ability.setAbilityName(abilityString);
+					ability.setInstancedAbilityId(i + 1);
+
+					abilities.add(ability);
 				}
 
 				// Set info

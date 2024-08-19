@@ -11,15 +11,15 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import messages.gallery.BalloonPlayerInfo;
-import messages.gallery.BalloonSettleInfo;
-import messages.gallery.SceneGalleryBalloonInfo;
-import messages.gallery.SceneGalleryInfo;
 
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.anime_game_servers.lua.engine.LuaTable;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.SceneGalleryInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.balloon.BalloonPlayerInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.balloon.BalloonSettleInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.balloon.SceneGalleryBalloonInfo;
 
 import java.util.List;
 import java.util.ArrayList;

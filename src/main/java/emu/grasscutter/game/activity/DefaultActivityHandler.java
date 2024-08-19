@@ -1,6 +1,9 @@
 package emu.grasscutter.game.activity;
 
+import emu.grasscutter.game.player.Player;
 import emu.grasscutter.game.props.ActivityType;
+import emu.grasscutter.game.world.Scene;
+
 import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityInfo;
 
 @GameActivity(ActivityType.NONE)

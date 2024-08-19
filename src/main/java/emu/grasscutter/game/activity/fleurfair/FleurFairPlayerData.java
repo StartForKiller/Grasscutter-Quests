@@ -75,8 +75,8 @@ public class FleurFairPlayerData {
                 .build();
         }
 
-        public messages.activity.fleur_fair.FleurFairChapterInfo toProto() {
-            return new messages.activity.fleur_fair.FleurFairChapterInfo(
+        public org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairChapterInfo toProto() {
+            return new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairChapterInfo(
                 chapterId,
                 openTime
             );
@@ -101,30 +101,30 @@ public class FleurFairPlayerData {
                 .build();
         }
 
-        public messages.activity.fleur_fair.FleurFairMinigameInfo toProto() {
+        public org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo toProto() {
             switch (type) {
                 case FLEUR_FAIR_MINI_GAME_BALLOON:
-                    return new messages.activity.fleur_fair.FleurFairMinigameInfo(
+                    return new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo(
                         true, //TODO: Check from openTime if this is true
                         minigameId,
                         openTime,
-                        new messages.activity.fleur_fair.FleurFairMinigameInfo.Detail.BalloonInfo(new messages.activity.fleur_fair.FleurFairBalloonInfo(maxScore))
+                        new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo.Detail.BalloonInfo(new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairBalloonInfo(maxScore))
                     );
                 case FLEUR_FAIR_MINI_GAME_FALL:
-                    return new messages.activity.fleur_fair.FleurFairMinigameInfo(
+                    return new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo(
                         true,
                         minigameId,
                         openTime,
-                        new messages.activity.fleur_fair.FleurFairMinigameInfo.Detail.FallInfo(new messages.activity.fleur_fair.FleurFairFallInfo(maxScore))
+                        new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo.Detail.FallInfo(new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairFallInfo(maxScore))
                     );
                 //TODO: Add proper music
                 case FLEUR_FAIR_MINI_GAME_MUSIC:
                 default:
-                    return new messages.activity.fleur_fair.FleurFairMinigameInfo(
+                    return new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo(
                         true,
                         minigameId,
                         openTime,
-                        new messages.activity.fleur_fair.FleurFairMinigameInfo.Detail.MusicInfo(new messages.activity.fleur_fair.FleurFairMusicGameInfo())
+                        new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMinigameInfo.Detail.MusicInfo(new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairMusicGameInfo())
                     );
             }
         }
@@ -146,8 +146,8 @@ public class FleurFairPlayerData {
                 .build();
         }
 
-        public messages.activity.fleur_fair.FleurFairDungeonSectionInfo toProto() {
-            return new messages.activity.fleur_fair.FleurFairDungeonSectionInfo(
+        public org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairDungeonSectionInfo toProto() {
+            return new org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairDungeonSectionInfo(
                 true,
                 openTime,
                 sectionId

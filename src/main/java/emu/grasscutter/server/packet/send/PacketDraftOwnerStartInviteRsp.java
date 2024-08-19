@@ -1,10 +1,11 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.gallery.draft.DraftInviteFailInfo;
-import messages.gallery.draft.DraftOwnerStartInviteRsp;
 
 import java.util.List;
+
+import org.anime_game_servers.multi_proto.gi.messages.gallery.draft.DraftInviteFailInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.draft.DraftOwnerStartInviteRsp;
 
 public class PacketDraftOwnerStartInviteRsp extends BaseTypedPacket<DraftOwnerStartInviteRsp> {
 

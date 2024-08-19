@@ -1,8 +1,9 @@
 package emu.grasscutter.server.packet.send;
 
+import org.anime_game_servers.multi_proto.gi.messages.gallery.SceneGalleryInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.SceneGalleryInfoNotify;
+
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.gallery.SceneGalleryInfo;
-import messages.gallery.SceneGalleryInfoNotify;
 
 public class PacketSceneGalleryInfoNotify extends BaseTypedPacket<SceneGalleryInfoNotify> {
 

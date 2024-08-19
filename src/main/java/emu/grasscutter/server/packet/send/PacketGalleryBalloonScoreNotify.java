@@ -1,9 +1,10 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.gallery.GalleryBalloonScoreNotify;
 
 import java.util.Map;
+
+import org.anime_game_servers.multi_proto.gi.messages.gallery.balloon.GalleryBalloonScoreNotify;
 
 public class PacketGalleryBalloonScoreNotify extends BaseTypedPacket<GalleryBalloonScoreNotify> {
 

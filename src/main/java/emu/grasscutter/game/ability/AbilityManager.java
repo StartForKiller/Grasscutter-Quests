@@ -39,6 +39,8 @@ import org.anime_game_servers.multi_proto.gi.messages.general.ability.AbilitySca
 import org.anime_game_servers.multi_proto.gi.messages.general.ability.AbilityString;
 import org.slf4j.Logger;
 
+import static org.anime_game_servers.multi_proto.gi.data.ability.AbilityInvokeArgument.*;
+
 import javax.annotation.Nullable;
 
 public final class AbilityManager extends BasePlayerManager {
@@ -141,15 +143,15 @@ public final class AbilityManager extends BasePlayerManager {
         }
 
         switch (invoke.getArgumentType()) {
-            case ABILITY_INVOKE_ARGUMENT_META_OVERRIDE_PARAM -> this.handleOverrideParam(invoke);
-            case ABILITY_INVOKE_ARGUMENT_META_REINIT_OVERRIDEMAP -> this.handleReinitOverrideMap(invoke);
-            case ABILITY_INVOKE_ARGUMENT_META_MODIFIER_CHANGE -> this.handleModifierChange(invoke);
-            case ABILITY_INVOKE_ARGUMENT_MIXIN_COST_STAMINA -> this.handleMixinCostStamina(invoke);
-            case ABILITY_INVOKE_ARGUMENT_ACTION_GENERATE_ELEM_BALL -> this.handleGenerateElemBall(invoke);
-            case ABILITY_INVOKE_ARGUMENT_META_GLOBAL_FLOAT_VALUE -> this.handleGlobalFloatValue(invoke);
-            case ABILITY_INVOKE_ARGUMENT_META_MODIFIER_DURABILITY_CHANGE -> this.handleModifierDurabilityChange(invoke);
-            case ABILITY_INVOKE_ARGUMENT_META_ADD_NEW_ABILITY -> this.handleAddNewAbility(invoke);
-            case ABILITY_INVOKE_ARGUMENT_META_TRIGGER_ELEMENT_REACTION -> this.handleTriggerElementReaction(invoke);
+            case ABILITY_META_OVERRIDE_PARAM -> this.handleOverrideParam(invoke);
+            case ABILITY_META_REINIT_OVERRIDEMAP -> this.handleReinitOverrideMap(invoke);
+            case ABILITY_META_MODIFIER_CHANGE -> this.handleModifierChange(invoke);
+            case ABILITY_MIXIN_COST_STAMINA -> this.handleMixinCostStamina(invoke);
+            case ABILITY_ACTION_GENERATE_ELEM_BALL -> this.handleGenerateElemBall(invoke);
+            case ABILITY_META_GLOBAL_FLOAT_VALUE -> this.handleGlobalFloatValue(invoke);
+            case ABILITY_META_MODIFIER_DURABILITY_CHANGE -> this.handleModifierDurabilityChange(invoke);
+            case ABILITY_META_ADD_NEW_ABILITY -> this.handleAddNewAbility(invoke);
+            case ABILITY_META_TRIGGER_ELEMENT_REACTION -> this.handleTriggerElementReaction(invoke);
             default -> {
                 logger.warn("Invoke type {} not handled", invoke.getArgumentType());
             }

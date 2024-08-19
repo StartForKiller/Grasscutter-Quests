@@ -15,7 +15,7 @@ import lombok.val;
 public class AbilityServerLuaCall extends AbilityActionHandler {
 
     @Override
-    public boolean execute(Ability ability, AbilityModifierAction action, ByteString abilityData, GameEntity target) {
+    public boolean execute(Ability ability, AbilityModifierAction action, byte[] abilityData, GameEntity target) {
         switch(action.luaCallType) {
             case CurGalleryControlGroup:
                 {

@@ -1,7 +1,8 @@
 package emu.grasscutter.server.packet.send;
 
+import org.anime_game_servers.multi_proto.gi.messages.gallery.GalleryPreStartNotify;
+
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.gallery.GalleryPreStartNotify;
 
 public class PacketGalleryPreStartNotify extends BaseTypedPacket<GalleryPreStartNotify> {
 

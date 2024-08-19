@@ -15,16 +15,17 @@ import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.server.packet.send.PacketFleurFairBalloonSettleNotify;
 import emu.grasscutter.utils.JsonUtils;
 import lombok.val;
-import messages.activity.ActivityInfo;
-import messages.activity.fleur_fair.FleurFairActivityDetailInfo;
-import messages.activity.fleur_fair.FleurFairBalloonSettleInfo;
-import messages.gallery.BalloonSettleInfo;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairActivityDetailInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.fleur_fair.FleurFairBalloonSettleInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gallery.balloon.BalloonSettleInfo;
 
 @GameActivity(ActivityType.NEW_ACTIVITY_FLEUR_FAIR)
 public class FleurFairActivityHandler extends ActivityHandler {
