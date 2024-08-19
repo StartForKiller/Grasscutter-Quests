@@ -23,7 +23,7 @@ import emu.grasscutter.utils.Utils;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.val;
-import messages.gadget.BlossomChestInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.BlossomChestInfo;
 import org.anime_game_servers.gi_lua.models.ScriptArgs;
 import org.anime_game_servers.gi_lua.models.constants.EventType;
 

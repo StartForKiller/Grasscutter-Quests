@@ -3,7 +3,7 @@ package emu.grasscutter.server.packet.send;
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.utils.Crypto;
-import messages.player.GetPlayerTokenRsp;
+import org.anime_game_servers.multi_proto.gi.messages.player.GetPlayerTokenRsp;
 
 public class PacketGetPlayerTokenRsp extends BaseTypedPacket<GetPlayerTokenRsp> {
 

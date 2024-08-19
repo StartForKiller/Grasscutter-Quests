@@ -1,8 +1,8 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.scene.CityInfo;
-import messages.scene.LevelupCityRsp;
+import org.anime_game_servers.multi_proto.gi.messages.scene.CityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.scene.LevelupCityRsp;
 
 public class PacketLevelupCityRsp extends BaseTypedPacket<LevelupCityRsp> {
 

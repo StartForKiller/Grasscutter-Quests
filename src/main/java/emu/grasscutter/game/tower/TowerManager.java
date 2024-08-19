@@ -20,7 +20,7 @@ import emu.grasscutter.net.proto.TowerCurLevelRecordOuterClass.TowerCurLevelReco
 import emu.grasscutter.net.proto.TowerTeamOuterClass.TowerTeam;
 import emu.grasscutter.server.packet.send.*;
 import lombok.val;
-import messages.scene.EnterType;
+import org.anime_game_servers.multi_proto.gi.messages.scene.EnterType;
 
 import java.util.*;
 import java.util.stream.Collectors;

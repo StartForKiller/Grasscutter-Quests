@@ -5,8 +5,8 @@ import java.util.List;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass.Retcode;
-import messages.chat.ChatInfo;
-import messages.chat.PullPrivateChatRsp;
+import org.anime_game_servers.multi_proto.gi.messages.community.chat.ChatInfo;
+import org.anime_game_servers.multi_proto.gi.messages.community.chat.PullPrivateChatRsp;
 
 public class PacketPullPrivateChatRsp extends BaseTypedPacket<PullPrivateChatRsp> {
 

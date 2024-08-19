@@ -5,7 +5,7 @@ import emu.grasscutter.GameConstants;
 import emu.grasscutter.data.excels.DungeonSerialData;
 import lombok.Builder;
 import lombok.Getter;
-import messages.scene.entity.WeeklyBossResinDiscountInfo;
+import org.anime_game_servers.multi_proto.gi.messages.scene.entity.WeeklyBossResinDiscountInfo;
 
 import java.time.Duration;
 import java.time.Instant;

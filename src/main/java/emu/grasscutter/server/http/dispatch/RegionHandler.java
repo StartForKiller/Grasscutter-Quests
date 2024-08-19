@@ -13,8 +13,8 @@ import emu.grasscutter.utils.Utils;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 import lombok.val;
-import messages.general.server.RegionInfo;
-import messages.login.QueryCurrRegionHttpRsp;
+import org.anime_game_servers.multi_proto.gi.messages.general.server.RegionInfo;
+import org.anime_game_servers.multi_proto.gi.messages.login.QueryCurrRegionHttpRsp;
 import org.anime_game_servers.core.base.Game;
 import org.anime_game_servers.core.base.Version;
 

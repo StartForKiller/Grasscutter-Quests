@@ -17,7 +17,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import messages.activity.ActivityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityInfo;
 import messages.gallery.BalloonSettleInfo;
 
 import java.util.*;

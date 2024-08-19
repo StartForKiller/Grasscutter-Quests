@@ -24,7 +24,7 @@ import emu.grasscutter.scripts.scriptlib_handlers.BaseHandler;
 import emu.grasscutter.server.packet.send.*;
 import lombok.Getter;
 import lombok.val;
-import messages.scene.EnterType;
+import org.anime_game_servers.multi_proto.gi.messages.scene.EnterType;
 import org.anime_game_servers.core.gi.enums.QuestState;
 import org.anime_game_servers.core.gi.models.Vector;
 import org.anime_game_servers.gi_lua.models.ScriptArgs;

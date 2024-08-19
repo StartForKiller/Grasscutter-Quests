@@ -17,7 +17,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
 import lombok.val;
-import messages.activity.ActivityWatcherInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityWatcherInfo;
 
 import java.util.ArrayList;
 import java.util.List;

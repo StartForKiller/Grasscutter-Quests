@@ -5,7 +5,7 @@ import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketGetPlayerSocialDetailRsp;
 import emu.grasscutter.server.packet.send.PacketSetPlayerBirthdayRsp;
 import lombok.val;
-import messages.chat.SetPlayerBirthdayReq;
+import org.anime_game_servers.multi_proto.gi.messages.community.player_presentation.SetPlayerBirthdayReq;
 
 public class HandlerSetPlayerBirthdayReq extends TypedPacketHandler<SetPlayerBirthdayReq> {
 	@Override

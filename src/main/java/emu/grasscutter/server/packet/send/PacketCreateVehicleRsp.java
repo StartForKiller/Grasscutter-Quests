@@ -7,9 +7,9 @@ import emu.grasscutter.game.entity.GameEntity;
 import emu.grasscutter.net.packet.BaseTypedPacket;
 
 import emu.grasscutter.utils.Position;
-import messages.gadget.CreateVehicleRsp;
-import messages.gadget.VehicleInteractType;
-import messages.general.vehicle.VehicleMember;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.CreateVehicleRsp;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.VehicleInteractType;
+import org.anime_game_servers.multi_proto.gi.messages.general.vehicle.VehicleMember;
 
 import java.util.List;
 

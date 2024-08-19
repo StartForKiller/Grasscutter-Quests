@@ -10,7 +10,7 @@ import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketActivityInfoNotify;
 import emu.grasscutter.server.packet.send.PacketMusicGameSettleRsp;
 import lombok.val;
-import messages.activity.music_game.MusicGameSettleReq;
+import org.anime_game_servers.multi_proto.gi.messages.activity.music_game.MusicGameSettleReq;
 
 public class HandlerMusicGameSettleReq extends TypedPacketHandler<MusicGameSettleReq> {
 

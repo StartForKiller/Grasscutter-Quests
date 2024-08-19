@@ -7,7 +7,7 @@ import emu.grasscutter.net.packet.*;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.*;
 import lombok.val;
-import messages.scene.SceneInitFinishReq;
+import org.anime_game_servers.multi_proto.gi.messages.scene.SceneInitFinishReq;
 
 import java.util.Optional;
 

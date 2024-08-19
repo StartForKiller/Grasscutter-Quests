@@ -1,8 +1,8 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.activity.ActivityInfo;
-import messages.activity.ActivityInfoNotify;
+import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityInfoNotify;
 
 public class PacketActivityInfoNotify extends BaseTypedPacket<ActivityInfoNotify> {
 

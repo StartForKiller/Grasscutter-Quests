@@ -5,8 +5,8 @@ import emu.grasscutter.game.entity.EntityGadget;
 import emu.grasscutter.net.packet.TypedPacketHandler;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketProjectorOptionRsp;
-import messages.gadget.ProjectorOpType;
-import messages.gadget.ProjectorOptionReq;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.ProjectorOpType;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.ProjectorOptionReq;
 import org.anime_game_servers.gi_lua.models.constants.ScriptGadgetState;
 
 public class HandlerProjectorOptionReq extends TypedPacketHandler<ProjectorOptionReq> {

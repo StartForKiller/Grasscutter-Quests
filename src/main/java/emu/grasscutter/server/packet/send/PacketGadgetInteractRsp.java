@@ -3,9 +3,9 @@ package emu.grasscutter.server.packet.send;
 import emu.grasscutter.game.entity.EntityBaseGadget;
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass;
-import messages.gadget.GadgetInteractRsp;
-import messages.gadget.InterOpType;
-import messages.gadget.InteractType;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.GadgetInteractRsp;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.InterOpType;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.InteractType;
 
 public class PacketGadgetInteractRsp extends BaseTypedPacket<GadgetInteractRsp> {
 	public PacketGadgetInteractRsp(EntityBaseGadget gadget, InteractType interact) {

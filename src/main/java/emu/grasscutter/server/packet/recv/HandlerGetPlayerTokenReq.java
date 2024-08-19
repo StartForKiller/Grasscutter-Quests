@@ -15,7 +15,7 @@ import emu.grasscutter.utils.ByteHelper;
 import emu.grasscutter.utils.Crypto;
 import emu.grasscutter.utils.Utils;
 import lombok.val;
-import messages.player.GetPlayerTokenReq;
+import org.anime_game_servers.multi_proto.gi.messages.player.GetPlayerTokenReq;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.util.StringContentProvider;
 import org.eclipse.jetty.util.ssl.SslContextFactory;

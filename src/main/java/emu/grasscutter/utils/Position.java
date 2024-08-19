@@ -9,7 +9,7 @@ import dev.morphia.annotations.Entity;
 import emu.grasscutter.net.proto.VectorOuterClass;
 import lombok.Getter;
 import lombok.Setter;
-import messages.general.Vector;
+import org.anime_game_servers.multi_proto.gi.messages.general.Vector;
 
 @Entity
 public class Position implements Serializable, org.anime_game_servers.gi_lua.models.Position {

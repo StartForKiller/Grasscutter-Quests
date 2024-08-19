@@ -1,6 +1,6 @@
 package emu.grasscutter.game.city;
 
-import messages.scene.CityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.scene.CityInfo;
 import dev.morphia.annotations.Entity;
 import lombok.Getter;
 import lombok.Setter;

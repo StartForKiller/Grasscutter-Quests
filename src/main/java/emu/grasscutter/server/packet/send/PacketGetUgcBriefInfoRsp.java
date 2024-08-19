@@ -2,9 +2,9 @@ package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass;
-import messages.activity.user_generated_content.GetUgcBriefInfoRsp;
-import messages.activity.user_generated_content.UgcType;
-import messages.activity.user_generated_content.music_game.UgcMusicBriefInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.user_generated_content.GetUgcBriefInfoRsp;
+import org.anime_game_servers.multi_proto.gi.messages.activity.user_generated_content.UgcType;
+import org.anime_game_servers.multi_proto.gi.messages.activity.user_generated_content.music_game.UgcMusicBriefInfo;
 
 public class PacketGetUgcBriefInfoRsp extends BaseTypedPacket<GetUgcBriefInfoRsp> {
 

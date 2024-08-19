@@ -6,7 +6,7 @@ import emu.grasscutter.net.proto.RetcodeOuterClass.Retcode;
 import emu.grasscutter.server.game.GameSession;
 import emu.grasscutter.server.packet.send.PacketGetUgcRsp;
 import lombok.val;
-import messages.activity.user_generated_content.GetUgcReq;
+import org.anime_game_servers.multi_proto.gi.messages.activity.user_generated_content.GetUgcReq;
 
 public class HandlerGetUgcReq extends TypedPacketHandler<GetUgcReq> {
 

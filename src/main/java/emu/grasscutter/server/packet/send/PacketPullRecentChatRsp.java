@@ -1,8 +1,8 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.chat.ChatInfo;
-import messages.chat.PullRecentChatRsp;
+import org.anime_game_servers.multi_proto.gi.messages.community.chat.ChatInfo;
+import org.anime_game_servers.multi_proto.gi.messages.community.chat.PullRecentChatRsp;
 
 import java.util.List;
 

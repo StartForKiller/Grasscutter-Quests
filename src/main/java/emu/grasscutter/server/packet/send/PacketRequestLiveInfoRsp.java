@@ -1,7 +1,7 @@
 package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
-import messages.gadget.RequestLiveInfoRsp;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.RequestLiveInfoRsp;
 
 public class PacketRequestLiveInfoRsp extends BaseTypedPacket<RequestLiveInfoRsp> {
 

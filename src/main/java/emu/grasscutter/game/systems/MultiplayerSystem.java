@@ -11,7 +11,7 @@ import emu.grasscutter.server.game.GameServer;
 import emu.grasscutter.server.packet.send.PacketPlayerApplyEnterMpNotify;
 import emu.grasscutter.server.packet.send.PacketPlayerApplyEnterMpResultNotify;
 import emu.grasscutter.server.packet.send.PacketPlayerEnterSceneNotify;
-import messages.scene.EnterType;
+import org.anime_game_servers.multi_proto.gi.messages.scene.EnterType;
 
 public class MultiplayerSystem extends BaseGameSystem {
 

@@ -2,7 +2,7 @@ package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass;
-import messages.team.avatar.AvatarChangeCostumeRsp;
+import org.anime_game_servers.multi_proto.gi.messages.team.avatar.cosmetic.AvatarChangeCostumeRsp;
 
 public class PacketAvatarChangeCostumeRsp extends BaseTypedPacket<AvatarChangeCostumeRsp> {
 

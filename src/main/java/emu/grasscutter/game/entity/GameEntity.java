@@ -22,11 +22,11 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.val;
-import messages.gadget.GadgetInteractReq;
-import messages.scene.entity.FightPropPair;
-import messages.scene.entity.MotionInfo;
-import messages.scene.entity.MotionState;
-import messages.scene.entity.SceneEntityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.gadget.GadgetInteractReq;
+import org.anime_game_servers.multi_proto.gi.messages.scene.entity.FightPropPair;
+import org.anime_game_servers.multi_proto.gi.messages.scene.entity.MotionInfo;
+import org.anime_game_servers.multi_proto.gi.messages.scene.entity.MotionState;
+import org.anime_game_servers.multi_proto.gi.messages.scene.entity.SceneEntityInfo;
 
 import javax.annotation.Nullable;
 
@@ -122,7 +122,7 @@ public abstract class GameEntity {
     }
 
     protected MotionInfo getMotionInfo() {
-        val speed = new messages.general.Vector();
+        val speed = new org.anime_game_servers.multi_proto.gi.messages.general.Vector();
         return new MotionInfo(this.getPosition().toProto(), this.getRotation().toProto(), speed, this.getMotionState());
     }
 

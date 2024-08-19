@@ -2,8 +2,8 @@ package emu.grasscutter.server.packet.send;
 
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass;
-import messages.chat.GetPlayerSocialDetailRsp;
-import messages.chat.SocialDetail;
+import org.anime_game_servers.multi_proto.gi.messages.community.player_presentation.GetPlayerSocialDetailRsp;
+import org.anime_game_servers.multi_proto.gi.messages.community.player_presentation.SocialDetail;
 
 public class PacketGetPlayerSocialDetailRsp extends BaseTypedPacket<GetPlayerSocialDetailRsp> {
 

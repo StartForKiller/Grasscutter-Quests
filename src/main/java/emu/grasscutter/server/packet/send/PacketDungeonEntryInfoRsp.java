@@ -7,7 +7,7 @@ import emu.grasscutter.game.player.Player;
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass.Retcode;
 import lombok.val;
-import messages.dungeon.DungeonEntryInfoRsp;
+import org.anime_game_servers.multi_proto.gi.messages.dungeon.entry.DungeonEntryInfoRsp;
 
 public class PacketDungeonEntryInfoRsp extends BaseTypedPacket<DungeonEntryInfoRsp> {
     public PacketDungeonEntryInfoRsp(Player player, int sceneId, int pointId) {

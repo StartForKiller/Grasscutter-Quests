@@ -13,9 +13,8 @@ import emu.grasscutter.game.world.Scene;
 import emu.grasscutter.server.packet.send.PacketActivityScheduleInfoNotify;
 import lombok.Getter;
 import lombok.val;
-import messages.activity.ActivityInfo;
+import org.anime_game_servers.multi_proto.gi.messages.activity.ActivityInfo;
 import messages.gallery.BalloonSettleInfo;
-
 import org.reflections.Reflections;
 
 import java.util.*;

@@ -5,8 +5,8 @@ import emu.grasscutter.game.activity.ActivityConfigItem;
 import emu.grasscutter.game.activity.ActivityManager;
 import emu.grasscutter.net.packet.BaseTypedPacket;
 import emu.grasscutter.net.proto.RetcodeOuterClass;
-import messages.shop.ActivityShopSheetInfo;
-import messages.shop.GetActivityShopSheetInfoRsp;
+import org.anime_game_servers.multi_proto.gi.messages.shop.ActivityShopSheetInfo;
+import org.anime_game_servers.multi_proto.gi.messages.shop.GetActivityShopSheetInfoRsp;
 
 import java.util.ArrayList;
 import java.util.List;
